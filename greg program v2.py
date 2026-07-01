@@ -15,6 +15,7 @@ from deashing_helpers import (
 COND_LIMIT_US_CM = 35
 STOP_LIMIT = 50  # Consecutive measurements above the threshold.
 MINIMUM_TIME_MINUTES = 180
+PUMP_SPEED_RPM = 5.79
 
 CAMERA_INDEX = 0
 IMAGE_INTERVAL_SECONDS = 60
@@ -44,7 +45,7 @@ def main():
         accumet, pump = find_devices()
         accumet.set_csv_output()
         pump.enable_remote()
-        pump.set_speed()
+        pump.set_speed_rpm(PUMP_SPEED_RPM)
 
         cap = cv2.VideoCapture(CAMERA_INDEX)
         if not cap.isOpened():

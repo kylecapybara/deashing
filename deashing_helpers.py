@@ -112,41 +112,52 @@ class AccumetMeter:
 
 
 class MasterflexPump:
+    """Serial driver for a Masterflex touchscreen pump using the RS-232 protocol.
+
+    Commands are sent as: address + command + optional parameter + carriage return.
+    The default address is 1, and valid pump addresses are 1 through 8.
+    """
+
     BAUDRATE = 115200
     TIMEOUT_SECONDS = 5
     DETECTION_TIMEOUT_SECONDS = 2
 
-    ADDRESS = 1
+    DEFAULT_ADDRESS = 1
+    MIN_ADDRESS = 1
+    MAX_ADDRESS = 8
+
     ACK = b"*"
     NOT_IN_REMOTE_MODE = b"~"
+    INVALID_COMMAND = b"#"
     COMMAND_ENCODING = 'ascii'
+    RESPONSE_ENCODING = 'ascii'
+    TERMINATOR = "\r"
 
-    SPEED_RPM = 5.79
-    SPEED_UNITS_PER_RPM = 100
-
-    ENABLE_REMOTE_COMMAND = "RE1"
-    DISABLE_REMOTE_COMMAND = "RE0"
-    SET_SPEED_COMMAND = f"R{int(SPEED_RPM * SPEED_UNITS_PER_RPM):03d}"
-    START_COMMAND = "H"
-    STOP_COMMAND = "I"
+    CLOCKWISE = "J"
+    COUNTERCLOCKWISE = "K"
     COMMAND_DELAY_SECONDS = 1
 
-    def __init__(self, connection, address=ADDRESS):
+    def __init__(self, connection, address=DEFAULT_ADDRESS):
         self.connection = connection
         self.port = connection.port
-        self.address = address
+        self.address = self.validate_address(address)
+
+    @staticmethod
+    def validate_address(address):
+        address = int(address)
+        if not MasterflexPump.MIN_ADDRESS <= address <= MasterflexPump.MAX_ADDRESS:
+            raise ValueError("Masterflex pump address must be between 1 and 8")
+        return address
 
     @classmethod
-    def open(cls, port, timeout=None, address=None):
-        if timeout is None:
-            timeout = cls.TIMEOUT_SECONDS
-        if address is None:
-            address = cls.ADDRESS
-
+    def open(cls, port, timeout=None, address=DEFAULT_ADDRESS):
         connection = open_serial_port(
             port,
             baudrate=cls.BAUDRATE,
-            timeout=timeout,
+            timeout=cls.TIMEOUT_SECONDS if timeout is None else timeout,
+            bytesize=serial.EIGHTBITS,
+            parity=serial.PARITY_NONE,
+            stopbits=serial.STOPBITS_ONE,
         )
         return cls(connection, address=address)
 
@@ -165,28 +176,97 @@ class MasterflexPump:
 
         return None
 
-    def command(self, command):
-        full_command = f"{self.address}{command}\r"
+    @staticmethod
+    def format_rpm(rpm):
+        scaled_rpm = round(float(rpm) * 100)
+        if scaled_rpm < 0:
+            raise ValueError("RPM must be greater than or equal to zero")
+        return f"{scaled_rpm:05d}"
+
+    @staticmethod
+    def format_percent(percent):
+        scaled_percent = round(float(percent) * 10)
+        if scaled_percent < 0:
+            raise ValueError("Percent speed must be greater than or equal to zero")
+        return f"{scaled_percent:05d}"
+
+    def build_command(self, command, parameter=None, address=None):
+        if address is None:
+            address = self.address
+        address = self.validate_address(address)
+        parameter_text = "" if parameter is None else str(parameter)
+        return f"{address}{command}{parameter_text}{self.TERMINATOR}"
+
+    def command(self, command, parameter=None, address=None):
+        request = self.build_command(command, parameter=parameter, address=address)
         self.connection.reset_input_buffer()
-        self.connection.write(full_command.encode(self.COMMAND_ENCODING))
+        self.connection.write(request.encode(self.COMMAND_ENCODING))
         return self.connection.readline().strip()
 
+    def query(self, command, address=None):
+        return self.command(command, address=address).decode(self.RESPONSE_ENCODING)
+
+    def require_ack(self, response):
+        if response != self.ACK:
+            raise RuntimeError(f"Masterflex command failed: {response!r}")
+        return response
+
+    def set_address(self, new_address):
+        new_address = self.validate_address(new_address)
+        self.connection.reset_input_buffer()
+        self.connection.write(f"@{new_address}{self.TERMINATOR}".encode(self.COMMAND_ENCODING))
+        response = self.connection.readline().strip()
+        self.require_ack(response)
+        self.address = new_address
+        return response
+
     def enable_remote(self):
-        return self.command(self.ENABLE_REMOTE_COMMAND)
+        return self.command("RE", "1")
 
     def disable_remote(self):
-        return self.command(self.DISABLE_REMOTE_COMMAND)
+        return self.command("RE", "0")
 
-    def set_speed(self, speed_command=None):
-        if speed_command is None:
-            speed_command = self.SET_SPEED_COMMAND
-        return self.command(speed_command)
+    def enable_serial_remote_mode(self):
+        return self.enable_remote()
+
+    def disable_serial_remote_mode(self):
+        return self.disable_remote()
+
+    def set_speed_rpm(self, rpm):
+        return self.command("R", self.format_rpm(rpm))
+
+    def read_speed_rpm(self):
+        return float(self.query("R"))
+
+    def set_speed_percent(self, percent):
+        return self.command("S", self.format_percent(percent))
+
+    def read_speed_percent(self):
+        return float(self.query("S"))
+
+    def set_speed(self, rpm):
+        return self.set_speed_rpm(rpm)
 
     def start(self):
-        return self.command(self.START_COMMAND)
+        return self.command("H")
 
     def stop(self):
-        return self.command(self.STOP_COMMAND)
+        return self.command("I")
+
+    def set_clockwise(self):
+        return self.command(self.CLOCKWISE)
+
+    def set_counterclockwise(self):
+        return self.command(self.COUNTERCLOCKWISE)
+
+    def read_status(self):
+        response = self.query("RC")
+        address, running, counterclockwise = (int(value.strip()) for value in response.split(","))
+        return {
+            "address": address,
+            "running": bool(running),
+            "counterclockwise": bool(counterclockwise),
+        }
 
     def close(self):
         self.connection.close()
@@ -981,6 +1061,9 @@ def find_devices():
 
 def port_is_open(port):
     """Return True if another Linux process already has this device open."""
+    if os.name == "nt":
+        return False
+
     target_device = os.path.realpath(port)
     proc_dir = "/proc"
 
@@ -1013,7 +1096,10 @@ def open_serial_port(port, **serial_kwargs):
     if port_is_open(port):
         raise RuntimeError(f"Serial port is already open: {port}")
 
-    return serial.Serial(port=port, exclusive=True, **serial_kwargs)
+    if os.name != "nt":
+        serial_kwargs["exclusive"] = True
+
+    return serial.Serial(port=port, **serial_kwargs)
 
 
 def log(log_file, message):
