@@ -273,7 +273,7 @@ class MasterflexPump:
 
 
 class FisherIsotempBath:
-    BAUDRATE = 19200
+    BAUDRATE = 9600
     TIMEOUT_SECONDS = 5
     DETECTION_TIMEOUT_SECONDS = 2
 
