@@ -31,10 +31,20 @@ REGLO_START_SETTLE_SECONDS = 1
 REGLO_TIMEOUT_BUFFER_SECONDS = 300
 REGLO_CALIBRATION_SLOPE = 0.1694
 REGLO_CALIBRATION_INTERCEPT = -0.727
-REGLO_PRIME_VOLUME_ML = 100
-REGLO_PRIME_FLOW_RATE_ML_MIN = 5
-REGLO_FINAL_VOLUME_ML = 3900
-REGLO_FINAL_SPEED_RPM = 100
+REGLO_RINSE_STEPS = (
+    {
+        "description": "100 mL channel 1 water rinse",
+        "channel": 1,
+        "volume_ml": 100,
+        "flow_rate_ml_min": 5,
+    },
+    {
+        "description": "3900 mL channel 1 water rinse",
+        "channel": 1,
+        "volume_ml": 3900,
+        "rpm": 100,
+    },
+)
 
 RUN_TIME_DISPLAY_FORMAT = '%Y-%m-%d %H:%M:%S'
 DATA_HEADER = "time,signal,temperature\n"
@@ -175,6 +185,7 @@ def wait_for_reglo_dispense(
     reglo_pump,
     expected_seconds,
     description,
+    channel,
     bath=None,
     bath_temperature_file=None,
     accumet=None,
@@ -201,7 +212,7 @@ def wait_for_reglo_dispense(
         time.sleep(REGLO_POLL_INTERVAL_SECONDS)
 
     try:
-        reglo_pump.stop()
+        reglo_pump.stop(channel=channel)
     finally:
         raise TimeoutError(f"Timed out waiting for Reglo ICC pump to finish {description}.")
 
@@ -211,6 +222,7 @@ def dispense_reglo_volume_at_rpm(
     volume_ml,
     rpm,
     description,
+    channel,
     bath=None,
     bath_temperature_file=None,
     accumet=None,
@@ -219,16 +231,17 @@ def dispense_reglo_volume_at_rpm(
 ):
     flow_rate_ml_min = flow_rate_from_rpm(rpm)
     expected_seconds = (volume_ml / flow_rate_ml_min) * 60
-    print(f"Starting {description}: {volume_ml} mL at {rpm:.2f} RPM.")
-    reglo_pump.set_volume_at_rate_mode()
-    reglo_pump.require_ok(reglo_pump.set_volume_ml(volume_ml))
-    reglo_pump.set_speed_rpm(rpm)
-    reglo_pump.start()
+    print(f"Starting {description}: channel {channel}, {volume_ml} mL at {rpm:.2f} RPM.")
+    reglo_pump.set_volume_at_rate_mode(channel=channel)
+    reglo_pump.require_ok(reglo_pump.set_volume_ml(volume_ml, channel=channel))
+    reglo_pump.set_speed_rpm(rpm, channel=channel)
+    reglo_pump.start(channel=channel)
     time.sleep(REGLO_START_SETTLE_SECONDS)
     wait_for_reglo_dispense(
         reglo_pump,
         expected_seconds,
         description,
+        channel,
         bath=bath,
         bath_temperature_file=bath_temperature_file,
         accumet=accumet,
@@ -242,6 +255,7 @@ def dispense_reglo_volume_at_flow_rate(
     volume_ml,
     flow_rate_ml_min,
     description,
+    channel,
     bath=None,
     bath_temperature_file=None,
     accumet=None,
@@ -250,7 +264,7 @@ def dispense_reglo_volume_at_flow_rate(
 ):
     rpm = rpm_from_flow_rate(flow_rate_ml_min)
     print(
-        f"Starting {description}: {volume_ml} mL at {flow_rate_ml_min} mL/min "
+        f"Starting {description}: channel {channel}, {volume_ml} mL at {flow_rate_ml_min} mL/min "
         f"({rpm:.2f} RPM from calibration)."
     )
     dispense_reglo_volume_at_rpm(
@@ -258,6 +272,49 @@ def dispense_reglo_volume_at_flow_rate(
         volume_ml,
         rpm,
         description,
+        channel,
+        bath=bath,
+        bath_temperature_file=bath_temperature_file,
+        accumet=accumet,
+        rinse_data_file=rinse_data_file,
+        log_file=log_file,
+    )
+
+
+def run_reglo_rinse_step(
+    reglo_pump,
+    step,
+    bath=None,
+    bath_temperature_file=None,
+    accumet=None,
+    rinse_data_file=None,
+    log_file=None,
+):
+    description = step["description"]
+    channel = step["channel"]
+    volume_ml = step["volume_ml"]
+
+    if "flow_rate_ml_min" in step:
+        dispense_reglo_volume_at_flow_rate(
+            reglo_pump,
+            volume_ml,
+            step["flow_rate_ml_min"],
+            description,
+            channel,
+            bath=bath,
+            bath_temperature_file=bath_temperature_file,
+            accumet=accumet,
+            rinse_data_file=rinse_data_file,
+            log_file=log_file,
+        )
+        return
+
+    dispense_reglo_volume_at_rpm(
+        reglo_pump,
+        volume_ml,
+        step["rpm"],
+        description,
+        channel,
         bath=bath,
         bath_temperature_file=bath_temperature_file,
         accumet=accumet,
@@ -280,28 +337,16 @@ def run_post_run_reglo_flush(
             log(log_file, f"{datetime.datetime.now()}, starting Masterflex Reglo ICC post-run flush...")
         if accumet is not None:
             accumet.reset_input_buffer()
-        dispense_reglo_volume_at_flow_rate(
-            reglo_pump,
-            REGLO_PRIME_VOLUME_ML,
-            REGLO_PRIME_FLOW_RATE_ML_MIN,
-            "100 mL Reglo ICC dispense",
-            bath=bath,
-            bath_temperature_file=bath_temperature_file,
-            accumet=accumet,
-            rinse_data_file=rinse_data_file,
-            log_file=log_file,
-        )
-        dispense_reglo_volume_at_rpm(
-            reglo_pump,
-            REGLO_FINAL_VOLUME_ML,
-            REGLO_FINAL_SPEED_RPM,
-            "3900 mL Reglo ICC dispense",
-            bath=bath,
-            bath_temperature_file=bath_temperature_file,
-            accumet=accumet,
-            rinse_data_file=rinse_data_file,
-            log_file=log_file,
-        )
+        for step in REGLO_RINSE_STEPS:
+            run_reglo_rinse_step(
+                reglo_pump,
+                step,
+                bath=bath,
+                bath_temperature_file=bath_temperature_file,
+                accumet=accumet,
+                rinse_data_file=rinse_data_file,
+                log_file=log_file,
+            )
         if log_file is not None:
             log(log_file, f"{datetime.datetime.now()}, completed Masterflex Reglo ICC post-run flush...")
     finally:
