@@ -8,6 +8,7 @@ import serial
 from deashing_helpers import (
     FisherIsotempBath,
     MasterflexPump,
+    MasterflexRegaloICCPump,
     available_usb_ports,
     create_run_paths,
     find_devices,
@@ -19,11 +20,21 @@ from deashing_helpers import (
 COND_LIMIT_US_CM = 35
 STOP_LIMIT = 50  # Consecutive measurements above the threshold.
 MINIMUM_TIME_MINUTES = 180
+PUMP_SPEED_RPM = 5.79
 
 CAMERA_INDEX = 0
 FRAME_INTERVAL_SECONDS = 60
 VIDEO_FPS = 24
 BATH_TEMPERATURE_INTERVAL_SECONDS = 60
+REGLO_POLL_INTERVAL_SECONDS = 5
+REGLO_START_SETTLE_SECONDS = 1
+REGLO_TIMEOUT_BUFFER_SECONDS = 300
+REGLO_CALIBRATION_SLOPE = 0.1694
+REGLO_CALIBRATION_INTERCEPT = -0.727
+REGLO_PRIME_VOLUME_ML = 100
+REGLO_PRIME_FLOW_RATE_ML_MIN = 5
+REGLO_FINAL_VOLUME_ML = 3900
+REGLO_FINAL_SPEED_RPM = 100
 
 RUN_TIME_DISPLAY_FORMAT = '%Y-%m-%d %H:%M:%S'
 DATA_HEADER = "time,signal,temperature\n"
@@ -54,6 +65,30 @@ def find_isotemp_bath(skip_ports=None):
     raise RuntimeError("Could not find Fisher Isotemp bath.")
 
 
+def find_reglo_icc_pump(skip_ports=None):
+    if skip_ports is None:
+        skip_ports = set()
+    else:
+        skip_ports = set(skip_ports)
+
+    for port in available_usb_ports():
+        if port in skip_ports:
+            continue
+
+        if port_is_open(port):
+            print(f"Skipping {port}: already open.")
+            continue
+
+        pump = MasterflexRegaloICCPump.probe(port)
+        if pump is None:
+            continue
+
+        print(f"Found Masterflex Reglo ICC pump on {port}.")
+        return pump
+
+    raise RuntimeError("Could not find Masterflex Reglo ICC pump.")
+
+
 def turn_off_isotemp_bath(bath=None):
     if bath is not None:
         try:
@@ -76,7 +111,17 @@ def initialize_data_file(output_file):
         f.write(DATA_HEADER)
 
 
+def initialize_rinse_data_file(output_file):
+    with open(output_file, 'w') as f:
+        f.write(DATA_HEADER)
+
+
 def initialize_bath_temperature_file(output_file):
+    with open(output_file, 'w') as f:
+        f.write(BATH_TEMPERATURE_HEADER)
+
+
+def initialize_rinse_bath_temperature_file(output_file):
     with open(output_file, 'w') as f:
         f.write(BATH_TEMPERATURE_HEADER)
 
@@ -90,6 +135,183 @@ def save_bath_temperature(bath, output_file, log_file):
     log(log_file, f"{timestamp}, bath temperature = {temperature:.2f} C")
 
 
+def save_accumet_measurement(measurement, output_file):
+    date = measurement["date"]
+    hour = measurement["time"]
+    cond = measurement["conductivity"]
+    temp = measurement["temperature"]
+    with open(output_file, 'a') as f:
+        f.write(f"{date}{hour},{cond},{temp}\n")
+
+
+def flow_rate_from_rpm(rpm):
+    return REGLO_CALIBRATION_SLOPE * rpm + REGLO_CALIBRATION_INTERCEPT
+
+
+def rpm_from_flow_rate(flow_rate_ml_min):
+    return (flow_rate_ml_min - REGLO_CALIBRATION_INTERCEPT) / REGLO_CALIBRATION_SLOPE
+
+
+def maybe_save_bath_temperature_during_flush(
+    bath,
+    bath_temperature_file,
+    log_file,
+    last_bath_temperature_time,
+):
+    current_time = time.time()
+    if bath is None or current_time - last_bath_temperature_time < BATH_TEMPERATURE_INTERVAL_SECONDS:
+        return last_bath_temperature_time
+
+    try:
+        save_bath_temperature(bath, bath_temperature_file, log_file)
+    except (OSError, RuntimeError, serial.SerialException, UnicodeDecodeError, ValueError) as error:
+        print(f"Warning: error while reading Fisher Isotemp bath temperature: {error}")
+        log(log_file, f"{datetime.datetime.now()}, error reading bath temperature: {error}")
+
+    return current_time
+
+
+def wait_for_reglo_dispense(
+    reglo_pump,
+    expected_seconds,
+    description,
+    bath=None,
+    bath_temperature_file=None,
+    accumet=None,
+    rinse_data_file=None,
+    log_file=None,
+):
+    deadline = time.monotonic() + expected_seconds + REGLO_TIMEOUT_BUFFER_SECONDS
+    last_bath_temperature_time = time.time()
+    while time.monotonic() < deadline:
+        if not reglo_pump.get_running():
+            print(f"Finished {description}.")
+            return
+        if bath_temperature_file is not None and log_file is not None:
+            last_bath_temperature_time = maybe_save_bath_temperature_during_flush(
+                bath,
+                bath_temperature_file,
+                log_file,
+                last_bath_temperature_time,
+            )
+        if accumet is not None and rinse_data_file is not None:
+            measurement = accumet.read_measurement()
+            if measurement is not None:
+                save_accumet_measurement(measurement, rinse_data_file)
+        time.sleep(REGLO_POLL_INTERVAL_SECONDS)
+
+    try:
+        reglo_pump.stop()
+    finally:
+        raise TimeoutError(f"Timed out waiting for Reglo ICC pump to finish {description}.")
+
+
+def dispense_reglo_volume_at_rpm(
+    reglo_pump,
+    volume_ml,
+    rpm,
+    description,
+    bath=None,
+    bath_temperature_file=None,
+    accumet=None,
+    rinse_data_file=None,
+    log_file=None,
+):
+    flow_rate_ml_min = flow_rate_from_rpm(rpm)
+    expected_seconds = (volume_ml / flow_rate_ml_min) * 60
+    print(f"Starting {description}: {volume_ml} mL at {rpm:.2f} RPM.")
+    reglo_pump.set_volume_at_rate_mode()
+    reglo_pump.require_ok(reglo_pump.set_volume_ml(volume_ml))
+    reglo_pump.set_speed_rpm(rpm)
+    reglo_pump.start()
+    time.sleep(REGLO_START_SETTLE_SECONDS)
+    wait_for_reglo_dispense(
+        reglo_pump,
+        expected_seconds,
+        description,
+        bath=bath,
+        bath_temperature_file=bath_temperature_file,
+        accumet=accumet,
+        rinse_data_file=rinse_data_file,
+        log_file=log_file,
+    )
+
+
+def dispense_reglo_volume_at_flow_rate(
+    reglo_pump,
+    volume_ml,
+    flow_rate_ml_min,
+    description,
+    bath=None,
+    bath_temperature_file=None,
+    accumet=None,
+    rinse_data_file=None,
+    log_file=None,
+):
+    rpm = rpm_from_flow_rate(flow_rate_ml_min)
+    print(
+        f"Starting {description}: {volume_ml} mL at {flow_rate_ml_min} mL/min "
+        f"({rpm:.2f} RPM from calibration)."
+    )
+    dispense_reglo_volume_at_rpm(
+        reglo_pump,
+        volume_ml,
+        rpm,
+        description,
+        bath=bath,
+        bath_temperature_file=bath_temperature_file,
+        accumet=accumet,
+        rinse_data_file=rinse_data_file,
+        log_file=log_file,
+    )
+
+
+def run_post_run_reglo_flush(
+    skip_ports=None,
+    bath=None,
+    bath_temperature_file=None,
+    accumet=None,
+    rinse_data_file=None,
+    log_file=None,
+):
+    reglo_pump = find_reglo_icc_pump(skip_ports=skip_ports)
+    try:
+        if log_file is not None:
+            log(log_file, f"{datetime.datetime.now()}, starting Masterflex Reglo ICC post-run flush...")
+        if accumet is not None:
+            accumet.reset_input_buffer()
+        dispense_reglo_volume_at_flow_rate(
+            reglo_pump,
+            REGLO_PRIME_VOLUME_ML,
+            REGLO_PRIME_FLOW_RATE_ML_MIN,
+            "100 mL Reglo ICC dispense",
+            bath=bath,
+            bath_temperature_file=bath_temperature_file,
+            accumet=accumet,
+            rinse_data_file=rinse_data_file,
+            log_file=log_file,
+        )
+        dispense_reglo_volume_at_rpm(
+            reglo_pump,
+            REGLO_FINAL_VOLUME_ML,
+            REGLO_FINAL_SPEED_RPM,
+            "3900 mL Reglo ICC dispense",
+            bath=bath,
+            bath_temperature_file=bath_temperature_file,
+            accumet=accumet,
+            rinse_data_file=rinse_data_file,
+            log_file=log_file,
+        )
+        if log_file is not None:
+            log(log_file, f"{datetime.datetime.now()}, completed Masterflex Reglo ICC post-run flush...")
+    finally:
+        try:
+            reglo_pump.stop()
+        except (OSError, RuntimeError, serial.SerialException, UnicodeDecodeError, ValueError):
+            pass
+        reglo_pump.close()
+
+
 def main():
     import cv2
 
@@ -99,12 +321,18 @@ def main():
     log_file = run_paths["log_file"]
     video_file = run_paths["video_file"]
     bath_temperature_file = run_paths["bath_temperature_file"]
+    rinse_data_file = run_paths["rinse_data_file"]
+    rinse_bath_temperature_file = run_paths["rinse_bath_temperature_file"]
     initialize_data_file(output_file)
     initialize_bath_temperature_file(bath_temperature_file)
+    initialize_rinse_data_file(rinse_data_file)
+    initialize_rinse_bath_temperature_file(rinse_bath_temperature_file)
 
     print(f"Saving run data in {run_paths['run_folder']}")
     print(f"Saving run video to {video_file}")
     print(f"Saving bath temperature data to {bath_temperature_file}")
+    print(f"Saving rinse data to {rinse_data_file}")
+    print(f"Saving rinse bath temperature data to {rinse_bath_temperature_file}")
 
     grace_period = MINIMUM_TIME_MINUTES
     hard_stop = float(input("Maximum Time (min): "))
@@ -120,7 +348,7 @@ def main():
         bath = find_isotemp_bath(skip_ports=(accumet.port, pump.port))
         accumet.set_csv_output()
         pump.enable_remote()
-        pump.set_speed()
+        pump.set_speed_rpm(PUMP_SPEED_RPM)
 
         cap = cv2.VideoCapture(CAMERA_INDEX)
         if not cap.isOpened():
@@ -224,9 +452,6 @@ def main():
             finally:
                 pump.close()
 
-        if accumet is not None:
-            accumet.close()
-
         if cap is not None:
             cap.release()
             cv2.destroyAllWindows()
@@ -235,6 +460,30 @@ def main():
         if video is not None:
             video.release()
             print("Video saved.")
+
+        try:
+            skip_ports = (bath.port,) if bath is not None else None
+            run_post_run_reglo_flush(
+                skip_ports=skip_ports,
+                bath=bath,
+                bath_temperature_file=rinse_bath_temperature_file,
+                accumet=accumet,
+                rinse_data_file=rinse_data_file,
+                log_file=log_file,
+            )
+        except (
+            OSError,
+            RuntimeError,
+            TimeoutError,
+            serial.SerialException,
+            UnicodeDecodeError,
+            ValueError,
+        ) as error:
+            print(f"Warning: error while running Masterflex Reglo ICC post-run flush: {error}")
+
+        if accumet is not None:
+            accumet.close()
+            accumet = None
 
         try:
             turn_off_isotemp_bath(bath)

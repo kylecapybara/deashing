@@ -15,6 +15,8 @@ DATA_FILENAME = "data.csv"
 LOG_FILENAME = "log.txt"
 VIDEO_FILENAME = "output_video.mp4"
 BATH_TEMPERATURE_FILENAME = "bath_temperature.csv"
+RINSE_DATA_FILENAME = "rinse_data.csv"
+RINSE_BATH_TEMPERATURE_FILENAME = "rinse_bath_temperature.csv"
 
 USB_PORT_GLOBS = ("/dev/ttyUSB*", "/dev/ttyACM*")
 USB_PORT_MARKERS = ("USB", "ACM")
@@ -1160,11 +1162,15 @@ def create_run_paths(resin_name=None):
         log_filename = f"{run_folder_name}-log.txt"
         video_filename = f"{run_folder_name}-output_video.mp4"
         bath_temperature_filename = f"{run_folder_name}-bath_temperature.csv"
+        rinse_data_filename = f"{run_folder_name}-rinse_data.csv"
+        rinse_bath_temperature_filename = f"{run_folder_name}-rinse_bath_temperature.csv"
     else:
         data_filename = DATA_FILENAME
         log_filename = LOG_FILENAME
         video_filename = VIDEO_FILENAME
         bath_temperature_filename = BATH_TEMPERATURE_FILENAME
+        rinse_data_filename = RINSE_DATA_FILENAME
+        rinse_bath_temperature_filename = RINSE_BATH_TEMPERATURE_FILENAME
 
     return {
         "run_folder": run_folder,
@@ -1172,4 +1178,6 @@ def create_run_paths(resin_name=None):
         "log_file": os.path.join(run_folder, log_filename),
         "video_file": os.path.join(run_folder, video_filename),
         "bath_temperature_file": os.path.join(run_folder, bath_temperature_filename),
+        "rinse_data_file": os.path.join(run_folder, rinse_data_filename),
+        "rinse_bath_temperature_file": os.path.join(run_folder, rinse_bath_temperature_filename),
     }
