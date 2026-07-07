@@ -2,6 +2,7 @@ import datetime
 import glob
 import math
 import os
+import re
 import time
 
 import serial
@@ -12,7 +13,8 @@ DATA_ROOT = "deashing data"
 RUN_FOLDER_PREFIX = "deashing"
 DATA_FILENAME = "data.csv"
 LOG_FILENAME = "log.txt"
-IMAGE_FOLDER_NAME = "captured_images"
+VIDEO_FILENAME = "output_video.mp4"
+BATH_TEMPERATURE_FILENAME = "bath_temperature.csv"
 
 USB_PORT_GLOBS = ("/dev/ttyUSB*", "/dev/ttyACM*")
 USB_PORT_MARKERS = ("USB", "ACM")
@@ -453,6 +455,9 @@ class FisherIsotempBath:
 
     def set_unit_on(self, enabled):
         return self.set_command(self.SET_UNIT_ON_COMMAND, int(bool(enabled)))
+
+    def set_unit_off(self):
+        return self.set_unit_on(False)
 
     def read_external_probe_enabled(self):
         return self.command(self.READ_EXTERNAL_PROBE_COMMAND) == "1"
@@ -1125,13 +1130,24 @@ def run_date_label(date):
     return f"{date.strftime('%B').lower()} {date.day} {date.year}"
 
 
-def create_run_paths():
+def safe_path_label(label):
+    label = label.strip()
+    label = re.sub(r"[\\/:\*\?\"<>\|]+", " ", label)
+    label = re.sub(r"\s+", " ", label)
+    return label.strip(" .")
+
+
+def create_run_paths(resin_name=None):
     os.makedirs(DATA_ROOT, exist_ok=True)
     date_label = run_date_label(datetime.datetime.now())
+    resin_label = safe_path_label(resin_name) if resin_name else ""
 
     run_number = 1
     while True:
-        run_folder_name = f"{RUN_FOLDER_PREFIX}-{date_label}-{run_number}"
+        if resin_label:
+            run_folder_name = f"{RUN_FOLDER_PREFIX}-{resin_label}-{date_label}-{run_number}"
+        else:
+            run_folder_name = f"{RUN_FOLDER_PREFIX}-{date_label}-{run_number}"
         run_folder = os.path.join(DATA_ROOT, run_folder_name)
         try:
             os.makedirs(run_folder)
@@ -1139,12 +1155,21 @@ def create_run_paths():
         except FileExistsError:
             run_number += 1
 
-    image_folder = os.path.join(run_folder, IMAGE_FOLDER_NAME)
-    os.makedirs(image_folder)
+    if resin_label:
+        data_filename = f"{run_folder_name}-data.csv"
+        log_filename = f"{run_folder_name}-log.txt"
+        video_filename = f"{run_folder_name}-output_video.mp4"
+        bath_temperature_filename = f"{run_folder_name}-bath_temperature.csv"
+    else:
+        data_filename = DATA_FILENAME
+        log_filename = LOG_FILENAME
+        video_filename = VIDEO_FILENAME
+        bath_temperature_filename = BATH_TEMPERATURE_FILENAME
 
     return {
         "run_folder": run_folder,
-        "data_file": os.path.join(run_folder, DATA_FILENAME),
-        "log_file": os.path.join(run_folder, LOG_FILENAME),
-        "image_folder": image_folder,
+        "data_file": os.path.join(run_folder, data_filename),
+        "log_file": os.path.join(run_folder, log_filename),
+        "video_file": os.path.join(run_folder, video_filename),
+        "bath_temperature_file": os.path.join(run_folder, bath_temperature_filename),
     }
