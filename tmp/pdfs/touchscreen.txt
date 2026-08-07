@@ -1,0 +1,1460 @@
+MasterSense  ™
+
+
+
+Communications
+     Protocols
+       Guide
+Linux is a registered trademark of the Linux Foundation.
+Windows is a registered trademark of Microsoft Corporation.
+Mac is a registered trademark of Apple, Inc.
+Python is a registered trademark of the Python Software Foundation.
+iOS is a registered trademark of Cisco Corporation.
+GitHub is a registered trademark of GitHub, Inc.
+Masterflex is a registered trademark of Masterflex LLC.
+MasterSense is a trademark of Masterflex LLC.
+
+
+
+
+2 | MasterSense Communications Protocols Ed.05
+Contents
+EtherNet/IP ........................................................................................................................................ 4
+  EtherNet/IP Mode ............................................................................................................................ 5
+   Enabling EtherNet/IP Mode ........................................................................................................... 6
+  EtherNet/IP Input Data ..................................................................................................................... 8
+   Input Data: 56 Bytes of Input Data from Pump to Master .............................................................. 8
+   Input Data: 124 Bytes of Input Data from Pump to Master ............................................................ 9
+   Input Data: 316 Bytes of Input Data from Pump to Master ...........................................................10
+   Input Data: 303 Bytes of Input Data from Pump to Master ...........................................................11
+   Output Data: 28 Bytes of Output Data from Pump to Master .......................................................12
+   Output Data: 12 Bytes of Output Data from Pump to Master........................................................13
+   Output Data: 44 Bytes of Output Data from Pump to Master .......................................................14
+PROFINET ....................................................................................................................................... 15
+   PROFINET Mode .........................................................................................................................16
+   Enabling PROFINET.... ................................................................................................................17
+   Using TIA Portal............................................................................................................................18
+   Controlling via PROFINET............................................................................................................21
+  PROFINET Input Data...................................................................................................................24
+  PROFINET Output Data................................................................................................................26
+Profibus .......................................................................................................................................... 28
+   Profibus Mode ..............................................................................................................................29
+   Profibus Settings ..........................................................................................................................29
+   Profibus Data ................................................................................................................................30
+Serial Communications ................................................................................................................. 34
+  Serial Communications Mode.........................................................................................................35
+   Masterflex Touchscreen Serial Control, RS-232 V2.20.0 or Later ................................................35
+   Microcontroller or Process Controller (PLC, DCS) Interface .........................................................36
+   Setting the Pump Address ............................................................................................................37
+   Structure of the Commands .........................................................................................................37
+   SerialComm Lock Mode ...............................................................................................................38
+   Serial Interface Command Set, Software Release v2.20.0 and Later ..........................................39
+   SerialComm Run Screen..............................................................................................................40
+   Serial Communication Setup ........................................................................................................41
+   Serial Communications Commands .............................................................................................43
+   Serial Command Interface Table ..................................................................................................44
+   Flow Units Index Correlation Table ...............................................................................................46
+
+
+
+
+                                                                                    MasterSense Communications Protocols Ed.05| 3
+                                                 EtherNet/IP
+
+
+
+
+4 | MasterSense Communications Protocols Ed.05
+EtherNet/IP Mode
+
+  In EtherNet/IP mode the pump can be operated in Continuous, Volume, or Time modes.
+  Drive-pumps are equipped with EtherNet/IP for real-time control by a programmable logic
+  controller (PLC). An electronic data sheet (EDS) command file is available for download by
+  emailing Masterflex technical support at techsupport@masterflex.com.
+
+  Verify that your drive-pump, PLC, along with an operator’s computer are all connected to the
+  same network. Also, verify the computer’s IP address is within the subnet mask range of the
+  PLC and the drive-pump. The default addressing methods for the drive-pump is a dynamic host
+  configuration protocol (DHCP), see Figures 1 below. A static IP address (see below) may be
+  assigned through the EtherNet Settings menu.
+
+
+
+
+                                          Figures 1
+
+
+
+
+                                                       MasterSense Communications Protocols Ed.05 | 5
+EtherNet/IP Mode (Cont.)
+
+
+Enabling EtherNet/IP Mode
+    • On the Menu touchscreen tap the EtherNet/IP switch moving it from OFF to ON (see
+       Figures 2 below)
+    • The EtherNet/IP message screen displays, tap its Accept button (see Figure 3 below)
+
+     Switch
+
+
+
+
+                            Figures 2                                      Figure 3
+
+
+
+               Successful Connection            Unsuccessful Connection
+EtherNet/IP Mode (Cont.)
+
+
+
+
+    Once the EtherNet/IP is enabled and configured (see Figure 4 below), an operator can view
+    the drive-pump from a PLC. To enable remote control, configure the drive-pump from a PLC
+    using the bit Pump1:0.Toggle_Remote_Local_Control_ 1_to_0.
+
+
+    NOTE: The bit changes state from Local to Remote on a 1-to-0 transition. Once enabled, the
+    EtherNet/IP banner will appear at the top of the drive-pump touchscreen (see below).
+
+
+                                                               Ethernet/IP Banner
+
+
+
+
+                                          Figure 4
+
+
+
+
+                                                       MasterSense Communications Protocols Ed.05 | 7
+EtherNet/IP Input Data
+
+Input Data: 56 Bytes of Input Data from Pump to Master
+
+   Bytes     Data Type    Description
+    0–3      32-bit INT   Pump Status
+                          Bit 0: Status OK
+                          Bit 1: Pump Running
+                          Bit 2: Dispense Running
+                          Bit 3: Tube Uncalibrated
+                          Bit 4: Head Open
+                          Bit 5: Reserved
+                          Bit 6: Flow Direction CCW
+                          Bit 7: Remote Control
+                          Bit 8–31: Reserved
+     4         Byte       Dispense Mode
+     5         Byte       Tube Size
+     6         Byte       Flow Units
+     7         Byte       Reserved Pad
+    8–11       Float      Cumulative Volume
+   12–15       Float      Remaining Dispense Volume
+   16 –19      Float      Remaining Dispense On Seconds
+   20–23       Float      Remaining Dispense Off Seconds
+   24–27     32-bit INT   Batch Count Current
+   28–31     32-bit INT   Batch Count Total
+   32–35       Float      Minimum Flow Rate
+   36 - 39     Float      Current Flow Rate
+   40–43       Float      Maximum Flow Rate
+   44–45     16-bit INT   Remaining Dispense On Time Days
+     46        Byte       Remaining Dispense On Time Hours
+     47        Byte       Remaining Dispense On Time Minutes
+     48        Byte       Remaining Dispense On Time Seconds
+     49        Byte       Remaining Dispense On Time Tenths
+   50–51     16-bit INT   Remaining Dispense Off Time Days
+     52        Byte       Remaining Dispense Off Time Hours
+     53        Byte       Remaining Dispense Off Time Minutes
+     54        Byte       Remaining Dispense Off Time Seconds
+     55        Byte       Remaining Dispense Off Time Tenths
+EtherNet/IP Input Data (Cont.)
+
+Input Data: 124 Bytes of Input Data from Pump to Master
+Assembly 101–Extended Input Assembly
+
+     Bytes        Data Type     Description
+     0–1          16-bit INT    Anti Drip Degrees
+      2              Byte       Alarm ID
+      3              Byte       Alarm Type Index
+      4              Byte       Alarm Severity Index
+     5–7                        Reserved Pad
+     8–11         32-bit INT    Alarm Triggered At
+    12–15         32-bit INT    Status Error Timestamp
+    16 –17        16-bit INT    Status Error Code
+    18–19         16-bit INT    Bit 0: Dispense Paused
+                                Bit 1–15: Reserved
+      20             Byte       Bit 0: Network Loss Shutoff
+                                Bit 1–7
+      21             Byte       Pump Head Selection (Indexed)
+    22–23         16-bit INT    Reserved Pad
+    24–87         128-bit INT   Currently Logged In User
+    88–89          16-bit INT   Bit 0: User Management Enabled
+                                Bit 1–15: Reserved
+    90–91         16-bit INT    User Role
+    92–95           Float       Speed Set Point in RPM
+    96–99           Float       Actual Speed in RPM
+   100–103          Float       Actual Flow Rate
+   104–119       16-Byte STR    Loaded Program Name
+   120–123          Float       Calibration Factor
+
+
+
+
+                                                                 MasterSense Communications Protocols Ed.05 | 9
+EtherNet/IP Input Data (Cont.)
+Input Data: 316 Bytes of Input Data from Pump to Master
+
+Assembly 102–Device Information
+
+     Bytes        Data Type    Description
+     0–39       40-Byte STR    Software Version
+    40–71       32-Byte STR    Model Number
+    72–103      32-Byte STR    Pump System
+   104–135      32-Byte STR    SKU
+   136–151      16-Byte STR    Serial Number
+   152–159       64- bit INT   MAC Address
+   160–173      14-Byte STR    Device ID
+   174 –175      16- bit INT   Coreboard Hardware Version
+   176–215      40-Byte STR    Coreboard Firmware Version
+   216–255      40-Byte STR    Motor Control Firmware Version
+   256–272      17-Byte STR    IPv4 Address (Ethernet)
+   273–275                     Reserved Pad
+   276–292      17-Byte STR    IPv4 Address (WiFi)
+                               Bit 0: Software Update Available
+     293            Byte
+                               Bit 1–7: Reserved
+   294–295                     Reserved Pad
+   296–315      20-Byte STR    MAC Address String
+EtherNet/IP Input Data (Cont.)
+Input Data: 303 Bytes of Input Data from Pump to Master
+Sensor data only applicable for available models: MasterSense
+Applicable EDS file: Masterflex_v4.1_vendorid1440_ls_ip_bt_pumps.eds
+
+Assembly 101–Extended Input Assembly
+
+    Bytes         Data Type                                            Description
+                                Threshold Details
+                                Bit 0: High Shutoff Threshold Enabled
+                                Bit 1: High Warning Threshold Enabled
+     0–3          32-bit INT    Bit 2: Low Warning Threshold Enabled
+                                Bit 3 Low Shutoff Threshold Warning
+                                Bit 4: Sensor Alarm Enabled
+                                Bit 5–31: Reserved
+     4–7            Float       High Shutoff Threshold
+     8–11           Float       High Warning Threshold
+    12–15           Float       Low Warning Threshold
+    16 –19          Float       Low Shutoff Threshold
+    20–21         16-bit INT    Sensor Type (Indexed: 0 = Reserved, 1 = MP30, 2 = MP1, 3 = PMAT, 4 = Universal)
+    22–23         16-bit INT    Sensor Unit (Indexed: 0 = PSI, 1 = bar, 2 = kPa, 3 = mbar)
+    24–27           Float       Sensor Range Minimum
+    28–31           Float       Sensor Range Maximum
+    32–33         16- bit INT   Delay Alarm from Start (Seconds)
+    34–35         16- bit INT   Sensor Input Type Range (Indexed)
+    36–39           Float       Sensor Reading
+    40–43           Float       Zero Offset Valve
+                                Bit 0: Sensor Installed
+                                Bit 1: Sensor Detected
+    44–47         16- bit INT
+                                Bit 2: Control Enabled
+                                Bit 3–31: Reserved
+   48–302            Float      Actual Flow Rate
+   104–119       255-Byte STR   Sensor Status String
+
+
+
+
+                                                                    MasterSense Communications Protocols Ed.05 | 11
+EtherNet/IP Output Data
+
+Output Data: 28 Bytes of Output Data from Pump to Master
+Assembly 112–Legacy Output Assembly (legacy EDS v1.14)
+
+     Bytes        Data Type    Description
+                               Pump Control
+                               Bit 0: Run/Pause (1 = RUN; 0 = PAUSE)
+                               Bit 1: Stop and Reset Dispense (1 to 0 transition)
+                               Bit 2: Toggle Remote/Local Control (1 to 0 transition)
+      0             Byte       Bit 3: Clear Cumulative Volume (1 to 0 transition)
+                               Bit 4: Reserved
+                               Bit 5: Reserved
+                               Bit 6: Set Flow Direction CCW (1 = CCW, 0 = CW)
+                               Bit 7: Reserved
+      1             Byte       Reserved Pad
+      2             Byte       Reserved Pad
+      3             Byte       Reserved Pad
+      4             Byte       Set Dispense Mode ( 0 = CONT, 1 = TIME, 2 = VOL)
+      5             Byte       Reserved Pad
+      6             Byte       Set Flow Units (see Table 3, page 19)
+      7             Byte       Reserved pad
+     8–11           Float      Set Flow Rate
+    12–15           Float      Set Dispense Volume
+    16–19           Float      Set Dispense On Seconds
+    20–23           Float      Set Dispense Off Seconds
+    24–27         32-bit INT   Set Batch Count Total (0 = infinite)
+EtherNet/IP Output Data (Cont.)
+
+Output Data: 12 Bytes of Output Data from Pump to Master
+Assembly 113–Extended Input Assembly
+
+    Bytes        Data Type    Description
+     0- 1        16-bit INT   Set Anti Drip Degrees
+      2            Byte       Bit 0: Enable Network Shutoff
+                              Bit: 1–7: Reserved
+      3            Byte       Bit 0: Reset Batch Count 1 to 0
+                              Bit: 1–7: Reserved
+      4            Byte       Set Pump Head Selection (Indexed)
+                              Bit 0: Set Tube Calibration 1 to 0
+      5            Byte       bit 1: Clear Calibration 1 to 0
+                              Bit: 2–7: Reserved
+     6–7         16-bit INT   Reserved Pad
+     8–11        32-bit INT   Calibration Factor
+
+
+
+
+                                                                   MasterSense Communications Protocols Ed.05 | 13
+EtherNet/IP Output Data (Cont.)
+
+Output Data: 44 Bytes of Output Data from Pump to Master
+Sensor data only applicable for available models: MasterSense
+Applicable EDS file: Masterflex_v4.1_vendorid1440_ls_ip_bt_pumps.eds
+
+Assembly 114–Sensor Control
+
+    Bytes        Data Type    Description
+                              Bit 0: Enable High Shutoff Threshold
+                              Bit 1: Enable High Warning Threshold
+                              Bit 2: Enable Low Warning Threshold
+     0–3         32-bit INT
+                              Bit 3: Enable Low Shutoff Threshold
+                              Bit 4: Enable Global Alarms
+                              Bit 5–31: Reserved
+     4–7           Float      Set High Shutoff Threshold
+     8–11          Float      Set High Warning Threshold
+    12–15          Float      Set Low Warning Threshold
+    16–19          Float      Set Low Shutoff Threshold
+    20–21        16-bit INT   Set Sensor Type (Indexed: 0 = Reserved, 1  =   MP30, 2   =  MP1, 3   =   PMAT, 4 =   Universal)
+    22–23        16-bit INT   Set Sensor Unit (Indexed: 0   =   PSI, 1   =   bar, 2   =   kPa, 3   =   mbar)
+    24–25        16-bit INT   Set Alarm Delay From Start (Seconds)
+    26–27        16-bit INT   Set Universal Sensor Input Range (Indexed)
+    28–31                     Reserved Pad
+    32–35          Float      Set Universal Sensor Range Minimum
+    36–39          Float      Set Universal Sensor Range Maximum
+                              Bit 0: Add Sensor Configuration 1 to 0
+                              Bit 1: Remove Sensor 1 to 0
+                              Bit 2: Zero Sensor 1 to 0
+    40–41        16-bit INT
+                              Bit 3: Remove Zero Offset 1 to 0
+                              Bit 4: Set Thresholds 1 to 0
+                              Bit 5–15: Reserved
+    40–41        16-bit INT   Sensor Indexed
+PROFINET
+
+
+
+
+ MasterSense Communications Protocols | 15
+PROFINET Mode (Cont.)
+
+In PROFINET mode, the pump can be operated in Continuous, Volume, or Time modes. Drive-pumps are
+equipped with PROFINET for real-time control by a Programmable Logic Controller (PLC).
+
+
+A General Station Description Markup Language (GSDML) file is available for download by emailing
+Masterflex technical support at techsupport@masterflex.com. This file allows your PLC software to properly
+recognize and configure the drive-pump within the PROFINET network.
+
+
+Network Configuration
+
+Before operating the drive-pump in PROFINET mode, ensure that the drive-pump, PLC and operator's com-
+puter are all connected to the same network.
+
+   Verify that the computer's IP address falls within the same subnet mask range as the PLC and drive-
+pump.
+
+   By default, the drive-pump uses Dynamic Host Configuration Protocol (DHCP) to automatically obtain an
+IP address (see Figure 1). Once PROFINET is enabled, the Ethernet Settings will be switched to STATIC.
+
+
+
+
+                                                  Figures 1
+
+
+
+16 | MasterSense Communications Protocols Ed.05
+PROFINET Mode (Cont.)
+
+Enabling PROFINET Mode
+    1.   On the Menu screen, tap PROFINET to open the PROFINET
+         Settings screen (see Figure 2 below).
+    2.   Move the Enable switch from OFF to ON.
+    3.   A confirmation message appears, informing you that PROFINET
+         remote control will be enabled.
+            a. Tap Accept to proceed (see Figure 3 below).
+    4.   Once enabled, the PROFINET status will display ON.
+    5.   Navigate to the Ethernet Settings page
+    6.   Verify setting is set to STATIC and the IP Address contains the
+         same subnet as the PLC
+    7.   The pump is now ready for control by a connected PLC.
+
+
+
+
+Notes
+    To disable PROFINET, return to the same menu and switch Enable to OFF.
+    When PROFINET is active, the pump may be remotely controlled through the PLC; local
+     touchscreen controls may be limited.
+    PROFINET cannot be enabled if Serial Communication or EtherNet/IP is enabled. Only
+     one remote communication protocol may be enabled at a time.
+
+                                          Switch
+
+
+
+
+                                    Figures 2                                           Figure 3
+
+
+
+
+                                                          MasterSense Communications Protocols Ed.05 | 17
+PROFINET Mode (Cont.)
+Using TIA Portal to Configure Your Setup
+
+Once PROFINET is enabled on the pump and the device is connected to the network, it can be
+added and controlled within Siemens TIA Portal.
+
+Add the PLC to the project
+Verify your PLC device model before continuing. *This procedure uses automatic hardware detection. If
+the exact PLC model is already known, steps 5-6 may be skipped.
+
+   1.   In the left-hand menu, double-click Devices & networks.
+   2.   In Hardware catalog (right-hand menu), expand Controllers.
+   3.   Select and add the correct PLC to your project.
+
+
+
+
+   4.   Double-click the PLC in the Devices & networks view.
+   5.   Select detect and Start search.
+   6.   Once the search is completed, select Detect.
+
+
+
+Import the GSDML File
+   1. Open TIA Portal.
+   2. Create a project and select Project view on the bottom-left corner.
+   3. From the menu, go to Options → Manage general station description files (GSD).
+   4. In the Source Path field, browse to the location of the pump's GSDML file.
+   5. Select the GSDML file from the list and click Install.
+
+
+
+
+ 18 | MasterSense Communications Protocols Ed.05
+PROFINET Mode (Cont.)
+Add the Pump to the Project
+  1.   In the Project Tree, select Devices & networks.
+  2.   In the top menu, select Online > Hardware Detection > PROFINET devices from Net-
+       work
+  3.   In the Hardware detection of PROFINET devices pop-up, select the following:
+          a.   Type of the PG/PC interface: PN/IE
+          b.   PG/PC interface: Realtek USB GbE Family Controller <3>
+                Note: The available PG/PC interface options may vary by system. Select the network
+                      interface that is connected to the same subnet as the PROFINET device.
+  4.   Select Start search.
+       Tip : If no devices are found, verify that the correct PG/PC interface is selected and that
+             PROFINET is enabled on the pump.
+  5.   Check the correct device and select Add devices.
+  6.   Assign the IO controller to the pump-device.
+
+
+
+
+  7.   In the Devices & networks view, double-click the pump-device.
+  8.   On the right-hand side in Hardware catalog, expand the Module.
+  9.   Double-click to add the modules. (e.g., Pump Control Module and Pump Status Module)
+
+
+
+
+                                                      MasterSense Communications Protocols Ed.05 |19
+PROFINET Mode (Cont.)
+
+   10. Confirm and verify the following on the General page of the device:
+          a.   IP address
+          b.   PROFINET device name (case-sensitive)
+          c.   Converted name (case-sensitive)
+
+
+
+
+  Download and Go Online
+     1.   Double-click Devices & networks on the left-hand menu.
+     2.   Right-click on the PLC.
+     3.   Hover over Compile and select Hardware and software (only changes).
+     4.   Right-click on the PLC again.
+     5.   Hover over Download to device and select Hardware and software (only changes).
+     6.   Verify field Connect to interface/subnet is set to PN/IE_1.
+     7.   Select Start search, select the PLC and select Load.
+     8.   Select Finish.
+     9.   Once the download is complete, select Go online to verify communication.
+
+
+
+
+20| MasterSense Communications Protocols Ed.05
+PROFINET Mode (Cont.)
+ 10. The pump should appear as an active PROFINET device.
+ 11. In the Project tree, confirm that all indicators next to the PLC and its components are green,
+     indicating the device is online and operating correctly.
+
+
+
+
+ 12. You can now monitor and control the pump through TIA Portal or your PLC logic .
+
+Example: Controlling the Pump via TIA Portal using the PROFINET I/O Module
+The following example demonstrates how to configure the pump for PROFINET mode and start-
+ing/stopping the pump. Note: Please reference the I/O mapping tables below to determine bit value.
+Step-by-Step Example
+1.     In the Project Tree, expand PLC tags and double-click Add new tag table.
+2.     Create the following tags:
+       a.      Toggle_Remote
+       b.      Run_Pause
+       c.      Pump_Running
+       d.      PROFINET_Control_Active
+
+
+
+
+3.     Select Devices & networks in the Project Tree, and double-click the pump-device.
+4.     Expand the Pump Control Module_1 and select Control Commands
+5.     Select the Properties tab and then IO tags tab.
+
+                                                          MasterSense Communications Protocols Ed.05 | 21
+PROFINET Mode (Cont.)
+6.    Note the Addresses of the Toggle_Remote_Local and Run_Pause bits. For example:
+      a.     Toggle Remote/Local = bit 2 = %Q1.2                     .
+      b.     Run Pause = bit 0 = %Q1.0
+      Note: Address assignments may differ by user configuration - adjust accordingly.
+
+
+
+
+7.    Navigate to the PLC tags table.
+8.    Update and assign the Address of the Toggle_Remote and Run_Pause respectively.
+
+
+
+
+9.    Repeat steps 3 - 8 with the Pump Status Module_1 and the Pump Status Flags for the
+      Pump_Running and PROFINET_Control_Active tags.
+10.   In the Project Tree, expand Watch and force table and double-click Add new watch table.
+11.   Add in the four (4) tags: Toggle_Remote, Run_Pause, Pump_Running, and
+      PROFINET_Control_Active.
+12.   Select the option to Go offline in the top menu.
+13.   Navigate to Devices & networks
+14.   Select the PLC
+15.   Select the Compile button in the top menu and verify completion in the terminal.
+
+
+
+16.   Select the Download to device button in the top menu.
+
+
+
+17.    Select Load and then select option Go Online.
+18.    Verify all status icons are Green.
+
+
+
+
+22| MasterSense Communications Protocols Ed.05
+PROFINET Mode (Cont.)
+19.    In the Project Tree, select the Watch table_1.
+20.    Select the Monitor all button.
+
+
+
+
+21.    For the Remote_Toggle row, set the Modify value column to TRUE.
+22.    Select the Modify button.
+
+
+
+
+23.   For the Remote_Toggle row, set the Modify value column to FALSE.
+24.   Select the Modify button.
+25.   Verify PROFINET_Control_Active is TRUE in the Monitor value column.
+
+
+
+
+26.   For the Run_Pause row, set the Modify value column to TRUE.
+27.   Select the Modify button.
+28.   Verify Pump_Running is TRUE in the Monitor value column.
+
+
+
+
+29.   To STOP the pump, set the Run_Pause row to FALSE and select the Modify button.
+30.   Verify Pump_Running is FALSE in the Monitor value column.
+
+
+
+
+                                                        MasterSense Communications Protocols Ed.05 | 23
+PROFINET Input Data
+
+Pump Status Module: Input Data from Pump to Master
+   Subslot   Name                                     Data Type     Description
+     1       Status Flags                             Unsigned16    Bit 0 : Status OK
+                                                                    Bit 1 : Pump Running
+                                                                    Bit 2 : Dispense On
+                                                                    Bit 3 : Tube Uncalibrated
+                                                                    Bit 4 : Head Open
+                                                                    Bit 5 : PROFINET Control Active
+                                                                    Bit 6 : Flow Direction CCW
+                                                                    Bit 7 : Remote Control Mode
+                                                                    Bit 8 : Priming Active
+                                                                    Bit 9 : Dispense Paused
+                                                                    Bit 10 : Network Loss Shutoff Enabled
+                                                                    Bit 11 - 15 : Reserved
+
+
+
+     2       Dispense Mode Index                      Unsigned8     Current dispense mode index
+     3       Tube Size Index                          Unsigned8     Selected tube size index
+     4       Flow Unit Index                          Unsigned8     Selected flowrate unit index
+     5       Cumulative Volume                        Float32       Total volume dispense
+     6       Remaining Dispense Volume                Float32       Volume remaining in current dispense
+     7       Total Remaining Dispense On (Seconds)    Float32       Seconds remaining in dispense on cycle
+
+
+     8       Total Remaining Dispense Off (Seconds)   Float32       Seconds remaining in dispense off cycle
+
+
+     9       Batch Count Current                      Unsigned32    Current batch count value
+     10      Batch Count Total                        Unsigned32    Total batch count target
+     11      Minimum Flow Rate Setpoint               Float32       Minimum allowed flowrate for current configuration
+     12      Flow Rate Setpoint                       Float32       Commanded flowrate setpoint
+     13      Maximum Flow Rate Setpoint               Float32       Maximum allowed flowrate for current configuration
+     14      Remaining On Time - Days                 Unsigned16    Remaining dispense on time in days
+     15      Remaining On Time - Hours                Unsigned8     Remaining dispense on time in hours
+     16      Remaining On Time - Minutes              Unsigned8     Remaining dispense on time in minutes
+     17      Remaining On Time - Seconds              Unsigned8     Remaining dispense on time in seconds
+     18      Remaining On Time - Tenths               Unsigned8     Remaining dispense on time in tenths of seconds
+     19      Remaining Off Time - Days                Unsigned16    Remaining dispense off time in days
+     20      Remainig Off Time - Hours                Unsigned8     Remaining dispense off time in hours
+     21      Remaining Off Time - Minutes             Unsigned8     Remaining dispense off time in minutes
+     22      Remaining Off Time - Seconds             Unsigned8     Remaining dispense off time in seconds
+     23      Remaining Off Time - Tenths              Unsigned8     Remaining dispense off time in tenths of seconds
+     24      Anti Drip Degrees                        Unsigned16    Anti-drip rotation angle in degrees
+     25      Pump Head Selection                      Unsigned8     Currently selected pump head index
+     26      Speed Setpoint (RPM)                     Float32       Motor speed setpoint in RPM
+     27      Actual Speed (RPM)                       Float32       Actual motor speed in RPM
+     28      Actual Flow Rate                         Float32       Measured actual flowrate
+     29      Loaded Program Name                      OctetString   Name of currently loaded program
+     30      Calibration Factor                       Float32       Tube calibration factor
+
+24 | MasterSense Communications Protocols Ed.05
+PROFINET Input Data
+
+Sensor Detail Module: Input Data from Pump to Master
+ Subslot   Name                               Data Type     Description
+   1       Sensor Status Flags                Unsigned8     Bit 0 : High Shutoff Threshold Enabled
+                                                            Bit 1 : High Warning Threshold Enabled
+                                                            Bit 2 : Low Warning Threshold Enabled
+                                                            Bit 3 : Low Shutoff Threshold Enabled
+                                                            Bit 4 : Global Alarms Enabled
+                                                            Bit 5 : Sensor Installed
+                                                            Bit 6 : Sensor Auto-Detected
+                                                            Bit 7 : Control Enabled
+
+
+   2       High Shutoff Threshold             Float32       High shutoff threshold value
+   3       High Warning Threshold             Float32       High warning threshold value
+   4       Low Warning Threshold              Float32       Low warning threshold value
+   5       Low Shutoff Threshold              Float32       Low shutoff threshold value
+   6       Sensor Type                        Unsigned16    Current sensor type
+   7       Sensor Unit                        Unsigned16    Current sensor unit
+   8       Sensor Range Minimum               Float32       Sensor range minimum value
+   9       Sensor Range Maximum               Float32       Sensor range maximum value
+   10      Delay Alarm From Start (Seconds)   Unsigned16    Alarm delay from start in seconds
+   11      Sensor Input Type Range            Unsigned16    Universal sensor input type range
+   12      Sensor Reading                     Float32       Current sensor reading value
+   13      Zero Offset Value                  Float32       Current zero offset value
+   14      Sensor Status String               OctetString   Sensor status description string
+
+
+
+
+                                                                          MasterSense Communications Protocols Ed.05 |25
+PROFINET Output Data
+
+Pump Control Module: Output Data from Pump to Master
+ Subslot   Name                        Data Type    Description
+   1       Pump Control Commands       Unsigned16   Bit 0 : Run (1) / Pause (0)
+                                                    Bit 1 : Stop and Reset Dispense (1 → 0)
+                                                    Bit 2 : Toggle Remote/Local (1 → 0)
+                                                    Bit 3 : Clear Cumulative Volume (1 → 0)
+                                                    Bit 4 : Set Flow Direction CCW
+                                                    Bit 5 : Enable Network Shutoff
+                                                    Bit 6 : Reset Batch Count (1 → 0)
+                                                    Bit 7 : Set Tube Calibration (1 → 0)
+                                                    Bit 8 : Clear Calibration (1 → 0)
+                                                    Bit 9 - 15 : Reserved
+
+
+
+   2       Set Dispense Mode           Unsigned8    Configure dispense mode (0 = Cont., 1 = Time, 2 = Volume)
+   3       Set Tube Size               Unsigned8    Configure tube size
+   4       Set Flow Units              Unsigned8    Configure flowrate units
+   5       Set Flow Rate               Float32      Set flowrate setpoint
+   6       Set Dispense Volume         Float32      Set dispense volume setpoint
+   7       Set Dispense On Seconds     Float32      Set dispense on time in seconds
+   8       Set Dispense Off Seconds    Float32      Set dispense off time in seconds
+   9       Set Batch Count Total       Integer32    Set total batch count target
+   10      Set Anti Drip Degrees       Integer16    Set anti-drip rotation angle
+   11      Set Pump Head Selection     Unsigned8    Select pump head configuration
+   12      Calibration Factor          Float32      Set calibration factor value
+
+
+
+
+26 | MasterSense Communications Protocols Ed.05
+PROFINET Output Data
+
+Sensor Control Module: Output Data from Pump to Master
+  Subslot   Name                                 Data Type    Description
+    1       Sensor Control Flags                 Unsigned16   Bit 0 : Enable High Shutoff Threshold
+                                                              Bit 1 : Enable High Warning Threshold
+                                                              Bit 2 : Enable Low Warning Threshold
+                                                              Bit 3 : Enable Low Shutoff Threshold
+                                                              Bit 4 : Enable Global Alarms
+                                                              Bit 5 : Add Sensor Configuration (1 → 0)
+                                                              Bit 6 : Remove Sensor (1 → 0)
+                                                              Bit 7 : Zero Sensor (1 → 0)
+                                                              Bit 8 : Remove Zero Offset (1 → 0)
+                                                              Bit 9 : Set Thresholds (1 → 0)
+                                                              Bit 10 - 15 : Reserved
+
+
+
+    2       Set High Shutoff Threshold           Float32      Set high shutoff threshold value
+    3       Set High Warning Threshold           Float32      Set high warning threshold value
+    4       Set Low Warning Threshold            Float32      Set low warning threshold value
+    5       Set Low Shutoff Threshold            Float32      Set low shutoff threshold value
+    6       Set Sensor Type                      Unsigned16   Configure sensor type
+    7       Set Sensor Unit                      Unsigned16   Configure sensor unit
+    8       Set Alarm Delay From Start           Unsigned16   Configure alarm delay from start
+    9       Set Universal Sensor Input Range     Unsigned16   Configure universal sensor input range
+    10      Set Universal Sensor Range Minimum   Float32      Set universal sensor range minimum
+    11      Set Universal Sensor Range Maximum   Float32      Set universal sensor range maximum
+    12      Sensor Index                         Unsigned16   Target sensor index for operations
+
+
+
+
+                                                                     MasterSense Communications Protocols Ed.05 |27
+                                                  Profibus
+
+
+
+
+28 | MasterSense Communications Protocols Ed.05
+Profibus
+    In Profibus mode the drive-pump will operate remotely in Continuous, Volume, or Time mode.
+
+Profibus Mode
+    Verify an operator computer and the PLC are both connected to the same network switch.
+    Also, verify the pump can send/receive ping commands from the computer. In addition,
+    verify the process control is running and connected to the network.
+
+    Connect the 9-pin Profibus cable to the drive-pump’s side connector, or to the Profibus
+    connector which is either on the Profibus module or on a process controller itself.
+Profibus Settings              << <<
+
+                Settings               Scroll
+
+
+    NOTE: Verify the drive-pump is connected to a PLC and is in Profibus mode.
+
+    Selecting Profibus Settings
+
+    1.   Tap Settings.
+    2.   The Menu screen displays (see Figure 5 below).
+    3.   Scroll to Profibus Settings.
+    4.   Verify the drive-pump and the PLC user interface are configured for the same address;
+         confirm by pressing the green Confirm checkmark at the top of the screen (see below).
+
+
+
+
+                                 Figure 5                Figure 6
+Profibus Data
+
+   The MASTERFLEX drive-pump operates as a DP-V0 Slave.
+   GSD File: CPMP0FF8.GSD
+   ID Number: 0FF8 HEX
+   Default Slave Address: 7
+   Cyclic Input Data: 56 Bytes
+   Cyclic Output Data: 28 Bytes
+
+   Table 1 below lists the 56 Bytes of cyclic input data, from pump to master.
+
+   Table 1
+
+       Cyclic Input (pump –> master, 56 Bytes)
+       Data                                    Size in Bytes   Data Type
+       Pump Status                                   4         unsigned integer
+       Dispense Mode                                 1         unsigned integer
+       Tube Size                                     1         unsigned integer
+       Flow Units                                    1         unsigned integer
+       Padding (not used)                            1         unsigned integer
+       Cumulative Volume                             4         decimal Floating-point
+       Remaining Dispense Volume                     4         decimal Floating-point
+       Remaining Dispense On Seconds                 4         decimal Floating-point
+       Remaining Dispense Off Seconds                4         decimal Floating-point
+       Current Batch Count                           4         unsigned integer
+       Total Batch Count                             4         unsigned integer
+       Minimum Flow Rate                             4         decimal Floating-point
+       Current Flow Rate                             4         decimal Floating-point
+       Maximum Flow Rate                             4         decimal Floating-point
+       Remaining Dispense On Days                    2         unsigned integer
+       Remaining Dispense On Hours                   1         unsigned integer
+       Remaining Dispense On Minutes                 1         unsigned integer
+       Remaining Dispense On Seconds                 1         unsigned integer
+       Remaining Dispense On Tenths                  1         unsigned integer
+       Remaining Dispense Off Days                   2         unsigned integer
+       Remaining Dispense Off Hours                  1         unsigned integer
+       Remaining Dispense Off Minutes                1         unsigned integer
+       Remaining Dispense Off Seconds                1         unsigned integer
+       Remaining Dispense Off Tenths                 1         unsigned integer
+
+
+   30 | MasterSense Communications Protocols Ed.05
+Profibus Data (Cont.)
+
+    NOTE: Converting multi-Byte data correctly will depend on the Byte order configuration of the
+    master. The 4-Byte decimal Floating-point values are represented in IEEE-754 Floating point
+    format. Pump Status, a 4-Byte unsigned integer as shown in Table 1 (previous page), indicates
+    the pump’s operation in separate bits. See Table 2 below for the description of each bit in
+    Pump Status.
+
+    Table 2
+
+     Pump Status
+     Status OK                   bit 0
+     Pump Running                bit 1
+     Dispense On                 bit 2
+     Tube Uncalibrated           bit 3
+     Head Open                   bit 4
+     Profibus Control            bit 5
+     Flow Direction CCW          bit 6
+     Remote Control              bit 7
+
+
+
+
+                                                   MasterSense Communications Protocols Ed.05 | 31
+Profibus Data (Cont.)
+
+Table 3 below lists the 28 Bytes of cyclic output data, from master to pump.
+
+        Cyclic Input (pump–master, 28 Bytes)
+       Data                            Size in Bytes   Data Type
+       Pump Control                          4         unsigned integer
+       Set Dispense Mode                     1         unsigned integer
+       Set Tube Size                         1         unsigned integer
+       Set Flow Units                        1         unsigned integer
+       Padding (not used)                    1         unsigned integer
+       Set Flow Rate                         4         decimal Floating-point
+       Set Dispense Volume                   4         decimal Floating-point
+       Set Dispense On Seconds               4         decimal Floating-point
+       Set Dispense Off Seconds              4         decimal Floating-point
+       Set Total Batch Count                 4         unsigned integer
+
+
+       Pump Control, a 4-Byte unsigned integer as shown in Table 3 (above), controls the pump’s
+       operation in separate bits. See Table 4 (below) for the description of each bit in Pump Control.
+
+
+Table 4
+
+
+        Pump Control
+        Run (1) Pause (0)                          bit 0
+        Stop and Reset Dispense (1 to 0)           bit 1
+        Toggle Remote/Local Control (1 to 0)       bit 2
+        Clear Cumulative Volume (1 to 0)           bit 3
+        Set Flow Direction CCW (1=CCW, 0=CW)       bit 6
+
+
+
+
+32 | MasterSense Communications Protocols Ed.05
+Profibus Data (Cont.)
+
+    A transition on bit 2 of Pump Control will toggle between Local and Remote control of the
+    drive-pump. For example, if the drive-pump is in Local mode, then a 1-to-0 transition will
+    put the drive-pump into Profibus Remote Control mode; only in this mode can any change
+    in the cyclic output data influence the drive-pump and be reflected in the cyclic input data.
+
+    By setting Dispense mode, the operating mode can be one of the following:
+    • Continuous
+    • Time Dispense
+    • Volume Dispense
+
+    Set Tube Size and Set Flow Units are integer numbers, beginning with 1. Entered numbers
+    corresponding to the drive-pump’s Local menu list on the touchscreen interface. For example,
+    if tube size is listed as “13” on the Local menu list, then “13” corresponds to a value “1” for tube
+    size output value flow units in “gal/hr.” The Local menu list then corresponds to a value of “9”
+    for the Flow Units output value.
+
+    • Set Flow Rate is a decimal Floating-point number. This value must be between the minimum
+       flow rate and maximum flow rate values from the input data
+    • Set Dispense Volume is the amount of volume that is dispensed in Volume Dispense mode
+    • Set Dispense On Seconds is the amount of pump dispense time in Time Dispense mode
+    • Set Dispense Off Seconds is used for both Time and Volume dispense modes, setting the
+       amount of time the pump will pause between dispenses
+
+
+
+
+                                                       MasterSense Communications Protocols Ed.05 | 33
+        Serial
+Communications
+
+
+
+
+      MasterSense Communications Protocols Ed.05 |34
+Serial Communications Mode
+Masterflex Touchscreen Serial Control, RS-232 V2.20.0 or Later
+    SerialComms Models
+    • Masterflex Ismatec ® Reglo touchscreen pump systems.
+    • Masterflex MasterSense Drive-Pumps (MasterSense L/S ®, I/P ®, and B/T ® ).
+    Requirements
+
+    RS232 Serial communication is available via virtual com port utilizing the USB port on the back
+    panel of the drive-pump. An adapter cable is required for communication (see Figure 7 below).
+
+    • If a host PC operating on Windows ®, Mac ®, or Linux ® is being used to control the pump
+       through serial communication, the Masterflex MFLX08006-90 serial cable is needed (see
+       Figure 7 below).
+    • If a microcontroller or PLC-based system that accepts UART TTL 3.3V signal is used to
+       control the pump, the Masterflex MFLX08006-91 serial cable is needed (see Figure 2,
+       next page). Alternatively, a FTDI USB to UART TTL 3.3V cable can also be used; three
+       wires–TXD, RXD, and GND–are needed.
+
+
+
+
+                                          MFLX78006-90
+
+
+                           USB                                        USB
+
+            Figure 7. Adapter cable for PC Host interface for Pump Serial Communication control.
+
+    PC Host Interface
+Serial Communications Mode (Cont.)
+
+Microcontroller or Process Controller (PLC, DCS) Interface
+
+      GND 1
+
+
+       CTS# 2
+
+     POWER 3
+                           MFLX78006-91
+       TXD 4
+       RXD 5                                   USB
+
+       RTS# 6
+
+
+                   Figure 8: Microcontroller or PLC Host Interface for Pump Serial Control.
+
+
+    On the pump side, a USB connector is used. On the microcontroller or process controller side,
+    only three out of six wires are needed; GND, TXD, and RXD. The CTS, RTS, and Power wires
+    (see Figure 8 above) are not used.
+    To use this option, you will need to develop your own software tailored to your specific platform
+    and programming language requirements.
+
+    Serial Communication Settings
+    • Baud Rate: 115200
+    • Bits: 8 bits
+    • Stopbits: 1
+    • Parity: no parity
+
+Software Prerequisites
+    To effectively utilize this software requires a terminal program capable of transmitting and
+    receiving serial commands. There are several options available depending on your operating
+    system: for Windows users, popular programs like PuTTy or TeraTerm can be used. If you are
+    using Linux or iOS, you can opt for terminal programs like Minicom®, iTerm®, or the built-in
+    terminals. Alternatively, Masterflex offers an open-source Python® terminal program called
+    masterflex-serial on GitHub®, freely available, it can serves as a valuable starting point for your
+    project. Visit https://github.com/masterflexbp/masterflex-serial
+
+
+
+
+                                                           MasterSense Communications Protocols Ed.05 | 36
+Serial Communications Mode (Cont.)
+Setting the Pump Address
+     Each command string begins with the pump address (1-8). It is factory-set to 1 and can be
+     changed with the @ command.
+
+Structure of the Commands
+     The address is followed by a character. Some commands have an additional parameter which
+     always consists of 2-5 figures.
+     • Command strings are completed by a carriage return ASCII 13 13 . The pump confirms
+        most of the commands with an asterisk (*). Yes/No inquiries are answered by (yes) +
+           –
+        or (no)
+     • Multi-digit replies are concluded by (CR) ASCII 13 and (LF) ASCII 10 13 10 .
+     • Incorrect command strings are answered by #
+     • Numerical values are confirmed as 3- to 5-digit figures. Four of the five digits are numer
+        als, one digit is either a decimal point or a preceding blank space
+
+
+
+     Once serial control is enabled by sending the command 1RE1 13 (see reference on the next
+     page), the Input SerialComms banner will appear at the top of the touchscreen display (see
+     Figure 9 below).
+
+
+                                  Input Banner Display
+
+
+                                             Once the pump is in Serial Communication mode, most
+                                             of the touchscreen is disabled except for the Start/Stop
+                                             button. The pump will stay in SerialComms mode until
+                                             one of the following events happens:
+                                             • The pump reboots
+                                             • SerialComms client sends the command 1RE0 13
+                                                  to disable Serial Communication mode
+
+                                             NOTE: When switching on the drive-pump the serial
+                                             command will only respond after the system has fully
+                                             loaded; the process may take several minutes.
+   Figure 9: SerialComms Banner
+Serial Communications Mode (Cont.)
+SerialComm Lock Mode
+    SerialComm Toggle enables or disables the pump’s serial communication mode. When dis-
+    abled, the pump will not accept any serial commands and remains inoperative. Enabling this
+    mode allows control of the pump through designated serial commands.
+
+    Lock Serial Communication Mode provides an additional layer of configuration stability for
+    applications requiring consistent communication modes. When this feature is enabled:
+    • The pump will automatically switch to SerialComm Mode
+    • If the pump is power-cycled, it will boot up directly into SerialComm Mode, ensuring
+       seamless operation
+    • Serial commands for toggling SerialComm Mode (1RE1 or 1RE0) will be ignored
+    • No other remote modes or inputs can override the locked SerialComm state
+
+    User Interface Integration:
+    • Activating Lock Serial Communication Mode restricts interactions with the pumps touch
+      screen, ensuring the configurations remain fixed (see Figure 10)
+    • To enable locked mode, toggle the setting and tap Accept on the popup (see Figure 11)
+    • Selecting the orange SerialComms Mode banner provides quick access to SerialComm
+       settings, simplifying navigation for the user (see Figure 12)
+    This feature is ideal for processes where maintaining uninterrupted SerialComm operations
+    is critical, ensuring the pump behavior remains consistent and secure under various operat-
+    ing conditions.
+
+                                                                                              Banner
+                                                                                              Display
+
+
+
+
+       Figure 10: Lock Serial             Figure 11:                     Figure 12:
+       Communication Mode                Serial screen             SerialComms Banner
+
+                                                          MasterSense Communications Protocols Ed.05 | 38
+Serial Communications Mode (Cont.)
+
+Serial Interface Command Set, Software Release v2.20.0 and Later
+
+
+      General Information                                  Example   Response   Note
+
+      Each command string must begin with the pump
+      address from 1 to 8, (factory-set to 1) except for    1xxxx       13
+      the set address command @.
+
+       Aside from set address command, two types of
+       supported commands are get and set.
+      • get command will query for the current pump
+        parameters
+      • set command will set the pump to a certain           @3         13
+        operating condition
+       Each command string sent from the client side
+       must be completed with the character ASCII (13,
+       carriage return).
+
+
+      .
+      The response from the pump will be:
+        * for valid set command
+      • # for invalid set command
+      • ~ for valid command but not in Serial Mode
+        {value} + 13 10 for get command
+
+
+
+  NOTE: *See page 37 for Serial Communications Commands details.
+Serial Communications Mode (Cont.)
+
+
+
+SerialComm Run Screen                         USB-A          9-PIN
+
+
+    In Serial Communications Mode the pump can be operated in Continuous Mode. Masterflex
+    Ismatec IPC pumps-drives are equipped with a USB-A port and a 9-pin RS232 DB-9 port
+    for real-time control through serial commands using a computer (see above).
+
+    NOTE: A Masterflex MFLX78006-90 serial cable is required if using USB-A.
+
+    On the touchscreen the SerialComms Run screen displays during serial communications
+    input operation (see Figure 13 below), as well as displays the currently selected settings
+    from an external remote control device.
+
+    NOTE: Not all touchscreen options are available during Remote Mode operation.
+
+                                                                 1. Banner Display
+
+
+
+
+     2. Flow Rate
+
+
+
+
+                                                                      3. Tube Life Timer
+
+                                                                      4. Start/Stop/Pause
+
+
+                                                                      5. Screen Lock
+
+
+
+                                Figure 13: SerialComms Run
+
+
+
+
+                                                        MasterSense Communications Protocols Ed.05 | 40
+Serial Communications Mode (Cont.)
+
+
+                                                                1. Mode Name Banner
+
+
+
+
+      2. Flow Rate
+
+
+
+
+                                                                    3. Tube Life Timer
+
+                                                                    4. Start/Stop/Pause
+
+
+                                                                    5. Screen Lock
+
+
+
+
+                                Figure 14: SerialComms Run
+
+
+   1. Mode Name Banner. Displays currently selected input type (see Figure 14 above).
+   2. Flow Rate. Displays current flow rate in an operator-selected unit of measurement.
+   3. Tube Life Timer. If enabled, Tube Life Timer displays a countdown timer that tracks
+      operational life of the pump tubes. Tap to access the Tube Life Timer screen.
+   4. Start/Stop/Pause. During operation, the display will change from Start to Stop.
+   5. Screen Lock. Locking the screen disables all touchscreen functions.
+   6. To lock the screen: tap Unlocked—the icon changes to Locked.
+   7. To unlock the screen tap Locked and then tap Confirm (not shown)—the icon
+      changes to Unlocked.
+Serial Communications Mode (Cont.)
+
+
+Serial Communication Setup
+
+
+    General Preparation
+
+    • Download and install a suitable terminal application such as PuTTY onto the system
+       controlling computer
+    • Verify the drive-pump and computer are connected through either the USB port using a
+       USB-A-to-USB-A serial cable or, for PC models, connected through the exclusive
+       9-pin DB-9 port using an RS232 DB-9 modem cable
+    • Verify the computer is configured to send ASCII serial messages at a 115200 baud rate
+
+    Setting the Drive-pump Address
+
+    Each command string must begin with the drive-pump address (1-8). It is factory-set at 1 and
+    can be changed using the address change command @ (see upcoming Serial Interface Com-
+    mand Table). The address will be stored permanently (even after the pump has been switched
+    off). The assignment of the address enables an operator to control up to 8 pumps with only
+    one interface.
+
+    Enabling/Disabling Serial Communications Remote Mode
+
+    When not in Serial Communications Remote mode the pump will only respond to the address
+    set (@) and Serial Remote mode enable commands (RE). To enter Serial Communications
+    Remote Mode, the control device needs to send an enable command (see upcoming the Seri-
+    al Interface Command table upcoming pages 30–33), this triggers the Serial Communications
+    Mode on the SerialComms Run touchscreen display.
+
+
+
+
+                                                     MasterSense Communications Protocols Ed.05 | 42
+Serial Communications Mode (Cont.)
+
+
+Serial Communications Commands
+Command Structure
+
+ Example Command                                           1 R 20 13
+ Command Structure          (Address) (Serial Command) (Command Parameter) (ASCII 13 Carriage Return)
+
+    The first character of the ASCII serial command string is the address, this is followed by the
+    characters for the serial command (see the Serial Interface Command table, next). Some
+    commands have an additional parameter following the command character for setting values.
+    The command string is completed by a carriage return (ASCII 13) 13 which initiates the pro-
+    cessing of the command. The serial commands settings are at 115200 baud rate, 8 bit, 1
+    stop bit, no parity.
+
+    Command acknowledgment:
+      • The pump confirms valid serial commands by returning an asterisk (*)
+      • Incorrect serial command strings will be returned with a hash mark (#)
+      • If the pump is not in Serial Communications mode the pump responds with tilde key (~);
+          value + 13 10 for getting command responses
+
+    Example
+
+    Objective: To configure the pump to run 20 batches, each with a 1-minute dispense time at
+    50% flow rate, with a 10-second interval between batches. Assumption: Pump address is 1.
+
+    1. Connect the PC to the Masterflex device via RS-232 cable.
+    2. Set up the correct communication settings (baud rate, COM port, etc.)
+    3. In the terminal send these commands to achieve the following:
+       a. Enable Serial Communication: 1RE1
+       b. Enable Time mode: 1N
+       c. Reset Batch Count to zero: 1R"
+       d. Set Batch Total to 20: 1"00020
+       e. Set On-Time to to one minute: 1VM001
+       f. Set Flow Rate to run at 50%: 1S005000
+       g. Set Off-Time to 10 seconds: 1RT0000100
+       h. Start the pump: 1H
+
+    Note: After each command is sent, a '*' response should be received, indicating that the
+    command was successfuly processed.
+Serial Communications Mode (Cont.)
+Serial Command Interface Table
+
+
+Command       Function / Description                          Example (NOTE: 13 is        Response            Note
+                                                              carriage return ASCII 13)
+Serial Communications Setup
+    @         - Set serial communications address for         Set current address to 2:
+                pump, from 1 to 8. The default serial                   @2 13
+                address is 1.
+              - Each pump must be allocated an individual
+                address, this address is used as the first
+                character in serial commands.
+   RE_        - Enable/Disable serial remote mode.                 Enable: 1RE1 13                            When SerialComm
+              - Toggle serial communications remote                Disable: 1RE0 13                           mode is enabled,
+                mode, use 1 = enable and 0 = disable after                                                    any previously stored
+                the RE command.                                                                               configurations (*) will be
+                                                                                                              retrieved.
+Controlling the Pump
+     H        Start Pump (Response (-) under command G,                  1H 13                       *                  Valid
+              in case of error message).
+     I        Stop pump dispensing.                                    1I 13                         *
+
+     J        Change pump revolution to clockwise                      1J 13                         *
+              direction.
+     K        Change pump revolution to counterclockwise               1K 13                         *
+              direction.
+    RC        - Display current pump status.                          1RC 13                  1, 0, 1 13 10
+              - Returns three integers (0,0,0); pump serial
+                address, running status 1 = dispensing
+                and 0 = not dispensing, pump direction 1 =
+                counterclockwise and 0 = clockwise.
+Inquiring and Setting Parameters
+     S        Get speed in % of max rotation speed.                    1S 13                  53.2 13 10
+ S_ __ _(_)   - Set speed in % of max rotation speed.               1S00500 13                       *                 XX.X%
+              - To set a pump speed in percent, enter
+                S followed by 5 digits that represent the
+                percent to one decimal point, for example,
+                00500 is 50.0%.
+ R____(_)     - Set pump speed in RPM.                             1R030050 13                       *        Divide by 100 to get the
+              - To set a pump speed RPM within the pump                                                       2 digit decimal => 300.50.
+                range, enter R followed by 3 or more digits
+                that represent the RPM with two decimal
+                points, for example, 10000 is 100.00.
+     R        Display pump speed in RPM.                               1R 13                 4000.12 13 1o
+
+Continued
+
+                                                                                  MasterSense Communications Protocols Ed.05 | 44
+Serial Communications Mode (Cont.)
+Serial Command Interface Table (Cont.)
+
+                   - Set flow unit index table 00-32.
+                   - To set a flow rate unit index add the two digit
+       RA            index after the RA command. To display the
+                     current index just enter RA.
+                                                                          1RA00 13             *
+                   - See Flow Units Index Correlation Table below.
+
+       RA          Display flow unit return unit index from 00 to 32.      1RA 13          01 13 10
+
+      RB           Display current cumulative volume in revolutions.       1RB 13       4.983 rev 13 10
+
+        :          Display current cumulative volume.                       1: 13       4.983 ml 13 10
+
+       W           Reset cumulative volume.                                1W 13               *
+       A           Sets control panel to manual operation.                  1A 13              *
+       B           Sets control panel to inactive.                          1B 13              *
+       L           Sets dispense mode to Continuous Mode in RPM.            1L 13              *
+                   Sets dispense mode to Time Dispense Mode Single
+       N
+                   Dispense.                                               1N 13               *
+        (          Gets software version.                                   1( 13        2.23.0 13 10
+
+       V           Gets ‘On Time’ in 1/10 sec.                              1V 13         130 13 10
+
+    V_ _ _ _       Sets ‘On Time’ in 1/10 sec.                            1V0130 13            *
+    VM _ _ _       Sets ‘On Time’ in minutes.                            1VM015 13             *
+     VH_ _         Sets ‘On Time’ in hours.                              1VH026 13             *
+                                                                                                           To retrieve stored configura-
+       *           Store current configurations.                            1* 13              *           tions, disable and re-enable
+                                                                                                           SerialComm mode.
+
+       0           Set default values.                                      10 13              *
+                   Sets ‘On-Time’ in hrs., min., sec. and 1/10 sec.                                        0 < X < 359,999.9 sec.
+ RV_ _ _ _ _ _ _
+                   in format HHMMSSX.                                   1RV2430150 13          *           where X is ‘On-Time’ in sec.
+
+       RV          Gets “On-Time’ in hrs., min., sec., and 1/0 sec.        1RV 13       24:30:15.0 13 10
+                   Sets ‘Off-Time’ in hrs., min., sec. and 1/10 sec.                                       0 < X < 359,999.9 sec.
+ RT_ _ _ _ _ _ _
+                   in the format HHMMSSX.                               1RV2430150 13          *           where X is ‘On-Time’ in sec.
+Serial Communications Mode (Cont.)
+Serial Command Interface Table (Cont.)
+                   Gets model and serial communication
+       #                                                        #1 ( 13 )           IPC 521 13 10
+                   version.
+                                                                                                    Running returns +, Paused
+       E           Gets pumps dispense status.                   1E 13                 +            returns + and Stopped
+                                                                                                    returns -
+
+
+
+
+Flow Units Index Correlation Table
+
+
+                                         Masterflex MasterSense Flow Units
+
+            Index         IP650        L/S100      L/S600    L/S250      B/T321    Gear6000    PistonQ1800
+
+               1         mL/min        mL/min      mL/min    mL/min      mL/min     mL/min          mL/min
+
+               2          mL/hr         mL/hr       mL/hr    mL/hr       L/min      mL/hr           mL/hr
+               3          L/min         L/min       L/min    L/min       L/min      L/min           L/min
+               4           L/hr          L/hr        L/hr     L/hr        L/hr       L/hr            L/hr
+               5           L/day        L/day       L/day    L/day       L/day      L/day           L/day
+               6         gal/min       µL/min       µL/min   µL/min      gal/min    µL/min          µL/min
+               7          gal/hr        µL/hr        µL/hr    µL/hr      gal/hr      µL/hr           µL/hr
+
+               8         gal/day       gal/min     gal/min   gal/min     gal/day    gal/min         gal/min
+
+               9          oz/min        gal/hr      gal/hr   gal/hr      cu m/hr    gal/hr          gal/hr
+              10           oz/hr        gal/hr     gal/day   gal/day      RPM       gal/day         gal/day
+              11         cu m/hr       oz/min       oz/min   oz/min         %       oz/min          oz/min
+              12           RPM          oz/hr        oz/hr    oz/hr                  oz/hr           oz/hr
+              13             %         cu m/hr     cu m/hr   cu m/hr                cu m/hr         cu m/hr
+              14                        RPM          RPM      RPM                    RPM             RPM
+              15                         %            %        %                      %               %
+
+
+Continued on next page
+
+
+
+
+                                                                       MasterSense Communications Protocols Ed.05 | 46
+Flow Units Index Correlation Table (Cont.)
+
+
+
+
+                                 Masterflex MasterSense Flow Units
+
+
+                Index   ISM160      ISM3521 ISM352 ISM4000     ISM1800    IPC
+
+
+                  1     mL/min      mL/min   mL/min   mL/min   mL/min    mL/min
+
+                  2      mL/hr       mL/hr   mL/hr    mL/hr     mL/hr    mL/hr
+
+                  3      L/day       L/day   L/day    L/day     L/day    L/day
+
+                  4      oz/min     oz/min   oz/min   oz/min   oz/min    oz/min
+
+                  5      oz/hr       oz/hr    oz/hr   oz/hr     oz/hr    oz/hr
+
+                  6      µL/min     µL/min   µL/min   µL/min   µL/min    µL/min
+
+                  7      µL/hr       µL/hr    µL/hr   µL/hr     µL/hr    µL/hr
+
+                  8      RPM         RPM      RPM     RPM       RPM      RPM
+
+                  9        %          %        %        %        %         %
+NOTES
+© 2026 Masterflex LLC. All rights reserved.
+Masterflex is a registered trademark of Masterflex LLC.
+
+Trademarks bearing the ® symbol in this publication
+are registered in the USA as well as other countries.
+
+Manufactured by Masterflex LLC
+28092 W Commercial Avenue, Barrington, IL 60010 USA
+
+USA & Canada Only
+Toll-Free 1-800.MASTERFLEX | 1-800.637.3739
+Outside USA & Canada 1-847.381.7050
+
+E M L: masterflex.tech@avantorsciences.com
+WEB: www.avantorsciences.com/masterflex
+
+Printed in USA
+
+
+
+
+                                                          A-1299-1185
+                                                          Edition 05
+

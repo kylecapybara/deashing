@@ -1,0 +1,2015 @@
+Reglo ICC
+Operating Manual
+              Reglo ICC Operating Manual
+              Download Pump Control Software:
+              www.masterﬂex.com
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E          2 of 36
+Table of Contents
+
+
+1. Safety Precautions ................................................................5                            13. Tubing Size and Flow Rate Chart ......................................16
+
+2. Warranty ................................................................................5                      14. Reglo ICC Serial Command Protocol ...............................17
+
+3. Product ..................................................................................6                            14.1 Overview ..................................................................................17
+
+4. Rear Panel .............................................................................6                              14.2 Physical Layer ...........................................................................17
+
+5. Main Voltage .........................................................................6                                14.3 Message Format......................................................................17
+
+6. Pump Operation ...................................................................7                                    14.4 Addressing................................................................................17
+
+        6.1 Key Pad and Screen ..................................................................7                        14.5 Deﬁnitions .................................................................................18
+
+        6.2 Icons .............................................................................................7          14.6 Data Type Formats ..................................................................18
+
+        6.3 Changing Parameters ...............................................................8                                   14.6.1 Boolean..............................................................18
+
+        6.4 Menus ..........................................................................................8                      14.6.2 Direction ............................................................18
+
+                 6.4.1 STATUS Menu .....................................................8                                          14.6.3 Discrete Type 1..................................................18
+
+                 6.4.2 PUMPING Menu .................................................9                                             14.6.4 Discrete Type 2..................................................18
+
+                 6.4.3 SETUP Menu .......................................................11                                        14.6.5 Discrete Type 3..................................................18
+
+                 6.4.4 CALIBRATION Menu ..........................................11                                               14.6.6 Discrete Type 4..................................................19
+
+                 6.4.5 GLOBAL SETTINGS Menu .................................12                                                    14.6.7 Discrete Type 5..................................................19
+
+                                                                                                                                   14.6.8 Discrete Type 6..................................................19
+        6.5 Installing Tubing .........................................................................12
+                                                                                                                                   14.6.9 Fractional Type 1 ...............................................19
+        6.6 Information Screens ..................................................................13
+                                                                                                                                   14.6.10 Volume Type 1 ................................................19
+        6.7 Differential Pressure...................................................................13
+                                                                                                                                   14.6.11 Time Type 1 .....................................................19
+        6.8 When the Pump is Idle..............................................................13
+                                                                                                                                   14.6.12 Time Type 2 .....................................................19
+7. Over Current Protection ......................................................13
+                                                                                                                                   14.6.13 String................................................................19
+8. Cassettes ...............................................................................14                                     14.6.14 Language .........................................................20
+
+        8.1 Ordering Spare Parts.................................................................14                15. Response Messages ...........................................................20
+        8.2 Cassette Material .......................................................................14                   15.1 Status Response ......................................................................20
+        8.3 Pressure Lever Cassettes ..........................................................14                         15.2 Data Response .........................................................................20
+
+9. Repair ....................................................................................14                   16. Request Messages .............................................................21
+10. Cleaning ..............................................................................14                             16.1 Set Pump Address...................................................................21
+
+11. Disposal ...............................................................................14                            16.2 Device Command ...................................................................21
+
+12. Technical Speciﬁcations......................................................15                                       16.3 Tube Diameter Index ..............................................................25
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                                                                                        3 of 36
+17. Event Messages                                  25        18.6 System                                            31
+
+     17.1 Channel Stop                              26             18.6.1 Get pump ﬁrmware version                   31
+
+                                                                   8.6.2 Set pump’s temporary display name           31
+     17.2 Channel Status update                     26
+                                                                   18.6.3 Serial number                              31
+18. Examples                                        27
+                                                                   8.6.4 Language                                    31
+     18.1 Communication Management                  27
+                                                                   18.6.5 Channel count                              32
+           18.1.1 Get serial protocol version       27
+                                                                   18.6.6 Roller count                               32
+           18.1.2 Event message enable              27
+                                                                   18.6.7 Total Revolutions                          32
+     18.2 Pump Drive                                27
+                                                                   18.6.8 Volume total                               32
+           18.2.1 Start pumping                     27
+                                                                   18.6.9 Time total                                 32
+           18.2.2 Stop pumping                      27
+                                                              18.7 Events                                            33
+           18.2.3 Get direction                     27
+                                                                   18.7.1 Channel stop                               33
+           18.2.4 Set direction                     28
+                                                                   18.7.2 Channel status update                      33
+     18.3 Modes and Settings                        28
+                                                         19. Regulatory Information                                  34
+           18.3.1 Operational pumping mode          28
+                                                                   19.1 Manufacturing Information                    34
+           18.3.2 Pumping rate (drive speed)        28
+                                                                   19.2 CE Conformity                                34
+           18.3.3 Pumping rate (volume/time)        28
+                                                                   19.3 International Standards                      34
+           18.3.4 Volume                            28
+                                                                   19.4 CE Marketing                                 35
+           18.3.5 Run time                          29
+                                                                   19.5 Connected Equipment                          35
+           18.3.6 Pause time                        29
+
+           18.3.7 Cycle Count                       29
+
+     18.4 Conﬁguration                              29
+
+           18.4.1 Tubing Inside Diameter            29
+
+           18.4.2 Backsteps                         29
+
+     18.5 Calibration                               30
+
+           18.5.1 Volume (target)                   30
+
+           18.5.2 Volume (measured)                 30
+
+           18.5.3 Time                              30
+
+           18.5.4 Get time since last calibration   30
+
+           18.5.5 Start calibration                 30
+                                                                    We recommend that you read this operating manual
+           18.5.6 Cancel calibration in progress    31              carefully. When operating a pump, certain hazards
+                                                                    cannot be excluded. MASTERFLEX is not liable for any
+                                                                    damage resulting from the use of an ISMATEC® pump.
+                                                                    MASTERFLEX is not responsible for the unsafe handling
+                                                                    of chemicals.
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                             4 of 36
+  1. Safety Precautions
+  ISMATEC ® tubing pumps are designed for pumping and dispensing applications in
+  laboratories and industry. As such it is assumed that Good Laboratory Practice (GLP) and
+  the following recommendations will be observed.
+
+               General Warning               Pinch Point Warning:          Caution:                  Protective Earth:
+                                             Do not place                  Risk of                   (Ground)
+                                             your ﬁngers on                Electric Shock
+                                             or around the
+                                             pump head.
+
+
+
+      The pump must not be operated outside the designed operating and environmental
+       conditions. In particular, it is the user’s responsibility not to exceed the speciﬁed
+       maximum differential pressure for the pump head.
+      The pump must not be used:
+        For any medical applications.
+
+        In explosion proof chambers or in the presence of flammable gases or fumes.
+
+      The pump must be switched OFF when pump heads, cassettes or tubing are
+      inserted or changed.
+      The permeability of tubing depends on the material used and pressure conditions.
+      Tubing can also become electro-statically charged. Please be aware of possible hazards
+      when handling tubing in explosion-proof chambers.
+      Pump heads consist of rotating parts. Therefore, the pump must not be operated
+      before the cassettes are fully seated on the pump head.
+      Do not manipulate the pump head before the pump is switched off and disconnected
+      from the mains power supply.
+      Use extreme caution to ensure that no part of your body such as ﬁngers, long hair,
+      jewelry, or loose objects such as cables and tubing, etc. are near the pump head
+      during operation.
+      Tubing can tear and burst during operation. The necessary safety measures based on
+      the speciﬁc situation must be taken. When pumping corrosive media we recommend
+      placing the pump in a collecting basin.
+      The pump should not come in contact with liquid.
+      Do not open or remove the housing while the pump is operating.
+      Service and repairs carried out by the customer or by third-party companies voids
+      all warranties.
+      Appliance coupler of the power supply is used to disconnect the device from mains supply.
+
+
+  2. Warranty
+  We warrant the pump to be free of defects, provided they have been installed and operated
+  correctly according to our operating instructions for a period of 2 years from date of purchase.
+  If production or material faults can be proven, the defective parts will be repaired or replaced
+  free of charge at our discretion. A defective pump must be returned in the original ISMATECe
+  packaging or in packaging of equal quality. The duration of the warranty is not affected by
+  making a claim for warranty service. Further claims are excluded. Shipping costs are charged
+  to the customer.
+  Our warranty becomes invalid in the case of:
+   Improper operation by the user, or if the pump is diverted from its proper use.
+
+   Unauthorized modification or misuse by the user or by a third party.
+
+   Improper site preparation and maintenance.
+
+   Operation outside of the environmental and electrical specifications for the product.
+
+   Use of third-party software, hardware, accessories, or consumables purchased by the user
+    and which do not comply with our specifications.
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                   5 of 36
+    3. Product
+    Reglo ICC is a peristaltic pump with independently controllable channels. The intended
+    use for this pump is precise ﬂuid dispensing at low ﬂow rates up to 43 mL/min for ﬂuid
+    delivery applications.
+    Contents of the package:
+     Reglo ICC Pump (type as ordered)
+
+     1 power supply
+
+     Cassettes
+
+     1 power cord with country specific plug
+
+     Operating Manual
+
+    Please check the package and its contents for transport damage. If you ﬁnd any signs of
+    damage, please contact your local ISMATEC® representative immediately.
+
+
+
+    4. Rear Panel
+    1.    24 V DC power Inlet plug
+    2.    On/Off Switch, circuit breaker
+    3. RS-232 In, DB9-female
+
+    4.    RS-232 Out, DB9-male
+    5.    USB 2.0, Mini-B
+
+     5.
+                                                              3.
+
+
+
+
+                                                              4.
+
+
+
+
+                                                              2.
+    1.
+
+
+
+
+    5. Main Voltage
+    Use only the supplied power supply and cord for your Reglo ICC pump. DO NOT use any
+    other substitutes or damage may occur! The power supply is designed to provide DC
+    voltage for your Reglo ICC pump. It has built in circuit over current protection in the event
+    the pump is overloaded or a malfunction occurs. The power supply is connected to the
+    pump by a 4-pin power DIN snap and lock plug. Appliance coupler of the power supply is
+    used to disconnect the device from the mains supply.
+
+     Voltage 100–240VAC
+
+     50/60 Hz
+
+
+
+
+    REGLO ICC - ENGLISH , REV. D, 14-036-E                                                          6 of 36
+6
+    6. Pump Operation
+    6.1 Key Pad and Screen
+    1.   Run/Stop Button
+          a.   Starts and stops the pump
+          b. Interrupts and resumes a dispensing cycle
+
+    2.   Reset Button
+          a.   Escape out of editing a parameter without changing
+          b. Resets dispensing cycle when pump is paused
+
+    3. Directional Arrows
+
+          a.   Used to navigate screen and highlight selections
+          b. Up, down, left, right
+
+    4.   OK/Enter Button
+          a.   Press to edit parameter
+          b. Saves edit to parameter once complete
+
+    5.   LCD Display
+
+
+
+
+                                                        5.
+
+
+
+
+    4.
+                                                        3.
+
+
+
+    2.                                                  1.
+
+
+
+
+    6.2 Icons
+         1.       2.   3.    4.      5.     6.
+
+
+
+                                                             1.   STATUS Menu
+                                                             2.   PUMPING Menu
+                                                             3.   SETUP Menu
+                                                   7.        4.   CALIBRATION Menu
+                                                             5.   GLOBAL SETTINGS Menu
+                                                             6.   Channel Number/Next Screen
+                                                             7.   Channel Rotation Direction
+
+
+
+
+    REGLO ICC - ENGLISH , REV. D, 14-036-E                                                     7 of 36
+7
+    6.3 Changing Parameters
+                     Changing parameters is done by moving the cursor around the LCD screen
+                     using the four directional arrows. The arrows are used to navigate the menus
+                     and change numeric values and pumping modes. Using the arrows, the cursor
+                     can be moved to any ﬁeld to select or edit.
+
+
+                      Once the cursor is in the ﬁeld that you would like to select or edit, press the
+                      OK/Enter button. When highlighting numeric values, the cursor will highlight
+                      the entire value. Pressing OK/Enter will then allow the cursor to highlight only
+                      one digit for editing. Using the directional arrows up or down will increase or
+                      decrease the value and left and right will move the cursor to the next digit to
+    be edited. Once the value is correct, press OK/Enter and the cursor will then highlight the
+    entire value exiting the edit mode. When highlighting pumping modes, tubing ID, and
+    language, the OK/Enter button will allow the parameter to be changed by toggling through a
+    list using the directional arrows. Once the selection has been made, pressing the OK/Enter
+    button will save the selection and exit the editing mode.
+                   The Run/Stop button is used to start or stop all the channels. When the pump is
+                   idle, pressing the Run/Stop button will start pumping to the settings for each
+                   channel. When the pump is running, pressing the Run/Stop button will stop all
+                   channels. If a timed or repeating pumping mode is being used, pressing the
+                   Run/Stop button will pause the program. Pressing the Run/Stop button again
+                   will resume the program.
+                   The Reset button is used to cancel editing or reset pumping modes. When a
+                   ﬁeld has been selected for editing, pressing the Reset button will exit the
+                   editing mode and restore the original value. Also, when the pump is paused,
+                   pressing the Reset button will reset all the pumping modes back to their start
+                   point (number of cycles, time, volumes, etc.).
+
+
+
+    6.4 Menus
+    6.4.1 STATUS Menu
+    The STATUS Menu has three screens. The Status screen (a) displays the current pumping
+    parameters for each channel. The unit displayed varies depending on the pumping mode
+    selected. The Total Volume screen (b) displays the total volume that has been pumped since the
+    last time it was reset. The Total Time screen (c) displays the total hours pumped for each channel
+    since the last time it was reset. The time and volume can be reset by navigating to the desired
+    value and pressing OK/Enter button. Highlighting the arrow in the upper right hand corner of the
+    screen and pressing the OK/Enter button will toggle through the three status screens.
+
+
+
+
+      a.                                                 b.                                              c.
+
+
+
+
+    REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                    8 of 36
+8
+    6.4.2 PUMPING Menu
+
+
+
+
+    The PUMPING Menu allows you to set up the pumping parameters for all of the available
+    channels. The channel number that is being programmed is indicated in the upper right hand
+    corner. You can select the rotation direction, pumping mode, and values for each channel in the
+    PUMPING menu.
+
+    6.4.2.1 Flow Rate Mode
+                                                  Flow Rate Mode provides a continuous operation
+                                                  at a set rate and direction. Adjustable parameters
+                                                  are rotation direction, ﬂow rate, and ﬂow rate units.
+                                                  Rotation direction can be selected as clockwise
+                                                  (CW) or counter-clockwise (CCW). Flow rate can be
+                                                  changed in the range speciﬁed by the selected unit
+                                                  and/or tubing inner diameter (ID) (see Section
+                                                  6.4.3). Selectable ﬂow rate units are RPM, μL/min,
+                                                  mL/min, and L/min. Flow rate and rotation direction
+                                                  can be changed during the operation as well.
+
+
+    6.4.2.2 Volume Over Time Mode
+                                                  Volume Over Time Mode allows the user to
+                                                  dispense a desired volume over a desired time.
+                                                  The pump will determine the speed of rotation by
+                                                  set volume and time. Adjustable parameters are
+                                                  rotation direction, volume, volume units, time, and
+                                                  time units. Rotation direction can be selected as
+                                                  CW or CCW. Combinations of time and volume
+                                                  can be set to any value as long as it is in the range
+                                                  of the pump’s capabilities. If the time value
+                                                  entered is less than what the pump is capable of
+                                                  for desired volume, it will default to the shortest
+                                                  dispense time possible. Volume units selectable
+    are μL, mL and L. Time units selectable are seconds, minutes, and hours. None of the
+    parameters are changeable during pumping or when operation is paused. Dispensing program
+    can be reset during operation by pressing the Reset button after pumping is paused.
+
+    6.4.2.3 Volume Mode
+                                                  Volume Mode allows the user to dispense a set
+                                                  volume with a set ﬂow rate. Adjustable parameters
+                                                  are rotation direction, ﬂow rate, ﬂow rate units,
+                                                  volume, and volume units. Rotation direction can
+                                                  be selected as CW or CCW. Flow rate can be
+                                                  changed in the range speciﬁed by the selected unit
+                                                  and/or tubing ID (see Section 6.4.3). Selectable ﬂow
+                                                  rate units are RPM, μL/min, mL/min, and L/min.
+                                                  Selectable volume units are μL, mL, and L. Only
+                                                  ﬂow rate can be changed during pumping or when
+                                                  the operation is paused. Dispensing program can
+                                                  be reset during operation by pressing the Reset
+    REGLO ICC - ENGLISH , REV. D, 14-036-E        button after pumping is paused.                         9 of 36
+9
+6.4.2.4 Time Mode
+                                            Time Mode allows the user to dispense for a set
+                                            time duration with a set ﬂow rate. Adjustable
+                                            parameters are rotation direction, ﬂow rate, ﬂow
+                                            rate units, time, and time units. Rotation direction
+                                            can be selected as CW or CCW. Flow rate can be
+                                            changed in the range speciﬁed by the selected unit
+                                            and/or tubing ID (see Section 6.4.3). Selectable ﬂow
+                                            rate units are RPM, μL/min, mL/min, and L/min.
+                                            Selectable time units are sec, min, and hours. Only
+                                            ﬂow rate can be changed during pumping or when
+                                            the operation is paused. Dispensing program can
+                                            be reset during operation by pressing the Reset
+                                            button after pumping is paused.
+
+6.4.2.5 Volume with Pause Mode
+
+                                            Volume with Pause Mode allows the user to
+                                            dispense a set volume over multiple cycles.
+                                            Adjustable parameters are rotation direction, ﬂow
+                                            rate, ﬂow rate units, volume, volume units, pause
+                                            time between cycles, pause time unit, and number
+                                            of cycles. Rotation direction can be selected as CW
+                                            or CCW. Flow rate can be changed in the range
+                                            speciﬁed by the selected unit and/or tubing ID (see
+                                            Section 6.4.3). Selectable ﬂow rate units are RPM,
+                                            μL/min, mL/min, and L/min. Selectable volume
+                                            units are μL, mL, and L. Selectable pause time units
+are sec, min, and hours. Only ﬂow rate can be changed during pumping or when the operation
+is paused. Dispensing program can be reset during operation by pressing the Reset button
+after pumping is paused.
+
+6.4.2.6 Time with Pause Mode
+                                           Time with Pause Mode allows the user to dispense
+                                           for a set time duration over multiple cycles.
+                                           Adjustable parameters are rotation direction, ﬂow
+                                           rate, ﬂow rate units, time, time units, pause time
+                                           between cycles, pause time unit, and number of
+                                           cycles. Rotation direction can be selected as CW or
+                                           CCW. Flow rate can be changed in the range
+                                           speciﬁed by the selected unit and/or tubing ID (see
+                                           Section 6.4.3). Selectable ﬂow rate units are RPM,
+                                           μL/min, mL/min, and L/min. Selectable time units
+                                           are sec, min, and hours. Selectable pause time units
+are sec, min, and hours. Only ﬂow rate can be changed during pumping or when the operation
+is paused. Dispensing program can be reset during operation by pressing the Reset button
+after pumping is paused.
+
+6.4.2.7 Disabled Mode
+                                            Disabled Mode disables the selected channel for
+                                            pumping. The channels that are not anticipated to
+                                            pump any ﬂuid should be set to this mode.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                             10 of 36
+6.4.3 SETUP Menu
+
+
+
+
+In the SETUP Menu the tubing ID is set by selecting the size of tubing being used in the
+highlighted channel selected in the upper right hand corner. The tubing ID is selected from
+the drop down menu. The number of roller backsteps for drip free dispensing can also be set
+between 0–100 (0 = Default Value).
+
+
+6.4.4 CALIBRATION Menu
+In the CALIBRATION Menu each channel can be calibrated independently. The channel being
+calibrated is listed in the upper right hand corner.
+
+
+
+
+The Reglo ICC allows each channel to be set up and calibrated. This allows for maximum
+ﬂexibility and optimum channel to channel precision. Prior to the calibration each channel must
+be conﬁgured for tubing ID, the number of backsteps that are desired for drip free dispensing,
+and calibration of that channel.
+
+
+
+
+The Reglo ICC allows you to enter the volume of ﬂuid to dispense for calibration, dispense
+time for the speciﬁed volume, and pumping direction. Once you have entered those values,
+dispense desired volume into a container. Measure the actual amount of the ﬂuid by weight
+or volume and enter that value on the last screen to adjust the pump for your application. The
+calibration can be interrupted by pressing the Run/Stop button which will cancel the existing
+progress. New uninterrupted calibration run will be required in order to calibrate the channel
+properly. When adjusting the dispense time for calibration, if requested time is shorter than
+the pump’s physical capabilities, the dispense time will automatically default to minimum
+achievable dispense time.
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                            11 of 36
+You can complete the calibration by pressing OK/Enter button following your measurement
+input. You will receive a message and checkmark once your calibration is successful.
+
+
+
+
+You can cancel the calibration after the calibration run by pressing the Reset button. You will
+receive the message displaying that the calibration has been canceled.
+
+6.4.5 GLOBAL SETTINGS Menu
+In the GLOBAL SETTINGS Menu the display language can be selected from English, French,
+Spanish, and German. The pump can also be reset to the factory defaults at this menu.
+
+
+
+
+6.5 Installing Tubing
+1.   Switch the pump OFF.
+2.   Remove the cassette by slightly pressing the fixing-tongue and lifting it simultaneously.
+3. Insert the 2-stop or 3-stop color-coded tubing with one stopper into the cassette.
+
+4.   Let the tubing hang down (prevents it from twisting).
+5.   Insert the tubing with the second stopper at the other end of the cassette.
+6. Reinsert the cassette into the roller-head.
+
+7.   Make sure each cassette is positioned and aligned well between
+     dedicated segments on the bars.
+8. Turn the pump ON.
+
+9.   When the pump is idle, release all cassettes to maximize tubing life
+     (beware of siphoning or back flow).
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                            12 of 36
+6.6 Information Screens
+                                            Indicates that the pump is being remotely
+                                            controlled by a PC via USB connection.
+
+
+
+
+                                            Indicates that the internal temperature has
+                                            exceeded a safe threshold and pumping will stop
+                                            automatically to protect the pump. Turn the pump
+                                            power switch OFF and check your parameters,
+                                            differential pressure, and pump head for blockage.
+                                            The pump will not operate in an overheated
+                                            condition. Allow the pump to cool before turning
+                                            the power switch back ON.
+
+
+
+
+6.7 Differential Pressure
+The Reglo ICC can be used for continuous duty at a maximum differential pressure of 1.0 bar
+(smaller tube sizes and/or lever type cassettes allow higher pressures).
+
+
+
+6.8 When the Pump is Idle
+When the pump is idle, we recommend releasing the tubing cassette from the pump head.
+Releasing the cassette on the right side is sufﬁcient. This helps to protect the tubing from
+unnecessary strain and prolongs its service life. However, a siphoning effect can occur when
+the tubing cassette is released from the pump head. Use caution to prevent the ﬂuid from
+ﬂowing back to the reservoir.
+
+
+
+7. Over Current Protection
+The Reglo ICC features an external power supply that has overload protection as well as a
+combined circuit breaker and On/Off switch on the pump. There are NO replaceable fuses or
+service items inside the pump. This system is designed to disable power to the pump drive in
+case of excessive current to prevent damage. When an overload condition occurs, the pump
+will power down and it is recommend to immediately switch the pump OFF and unplug the
+pump from the wall. Before the pump is re-started, it is most important to check the reason
+for the overload (e.g. excess differential pressure etc.). Only when the cause of the overload
+has been detected and the failure corrected may the pump be started again. If the condition
+persists, contact an ISMATEC® technical support representative immediately.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                           13 of 36
+8. Cassettes
+Your Reglo ICC can use the MS/CA Click-n-Go® cassettes which accept “3-Stop” tubing.
+See Page 16 for more information. When using new tubing for the ﬁrst time, depending on
+the tubing used (hardness and diameter), the pump may not be primed and can not deliver
+the liquid. If that is the case, we recommend you wet the tubing and run the pump with the
+tubing inserted for about 15 to 30 minutes.
+
+
+
+8.1 Ordering Spare Parts
+ Order Number            Material          Cassette
+ IS3510A                 POM-C             MS/CA Click-n-Go®
+
+ IS3610A                 PVDF              MS/CA Click-n-Go®
+
+
+
+
+8.2 Cassette Material
+POM-C Polyoxymethylene-Copolymer:
+ Good chemical resistance to many organic solvents and strong alkaline chemicals.
+
+ Affected by strong acids and oxidizing substances.
+
+ UV-stabilized and stable up to temperatures of 80 °C/176 °F (dry, continuous use) or
+  136 °C/277 °F (dry, for a short time).
+PVDF Polyvinylidene ﬂuoride:
+ Very good chemical resistance to acids and most aliphatic, aromatic, and chlorinated solvents.
+
+ Not suitable for long contact with esters, ketones, amines, and strong alkaline chemicals.
+
+ Stable both to UV radiation and temperatures up to 110 °C/230 °F (continuous use) or
+  142 °C/288 °F (for a short time).
+
+
+
+8.3 Pressure Lever Cassettes
+ Note: Due to the configuration of the Reglo ICC Pump, the use of pressure lever cassettes
+  is not recommended.
+
+
+9. Repair
+The Reglo ICC is designed for many years of trouble free service. The Reglo ICC does not have
+any fuses or adjustments inside the pump. If you wish to attempt any repairs after the warranty
+period, please contact your local ISMATEC® Distributor for parts.
+
+
+
+10. Cleaning
+When replacing the tubes and/or cassettes, the pump head should be wiped to avoid any
+debris or residue. The pump head can be cleaned with mild detergent water before and after
+duty cycles for extended life. The exterior of the pump can be gently wiped with IPA (Isopropyl
+Alcohol). Use a 50% mixture of IPA and water on a lint-free soft cloth to clean the LCD screen.
+Do not spray or pour any liquid on the LCD screen.
+
+
+
+11. Disposal
+Please retain packaging materials until the product warranty ends. Afterwards please discard
+packaging materials in an environmentally friendly manner according to local regulations. Once
+the useful life of the product has ended, please ensure proper disposal according to local laws.
+Plastic and electronic components should be disposed of at a recycling facility. Please refer to
+local regulations regarding proper disposal.
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                             14 of 36
+12. Technical Specifications
+Patent Pending
+Drive:
+ Motor type: Stepper Motor
+
+Flow rate and speed:
+ Flow rate: 0.0002–35 mL/min
+
+ Speed range: 0.1–100 rpm
+
+ Digitally adjustable in steps of 0.01 rpm
+
+Differential pressure:
+ Max. 1.0 bar (14.5 psi)
+
+Remote control:
+ Via USB 2.0 or RS-232 digital interfaces
+
+Main power connection:
+ 100–240VAC / 50/60 Hz
+
+Power consumption:
+ Max. 30 W
+
+Operating conditions:
+ Temperature: +5 to 40 °C (41 to +104 °F)
+
+ Rel. humidity max.: 80%
+
+     Non-condensing, at normal laboratory conditions
+
+ Dimensions/Weight (D x W x H): 205 x 125 x 170 mm (8.1 x 5 x 6.7")
+
+ Weight: 2.7 kg (6 lbs)
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                 15 of 36
+13. Tubing Size and Flow Rate Chart
+                     Rollers                                          8
+ RPM                                             1.0                   100
+
+                                                 Flow Rates            mL/min.
+ Tube ID              Order No
+                                                 min.                  max.
+
+ 0.13                 SC0189T                    0.002                 0.11
+
+ 0.19                 SC0049T                    0.003                 0.23
+
+ 0.25                 SC0050T                    0.005                 0.41
+
+ 0.38                 SC0051T                    0.010                 0.94
+
+ 0.44                 SC0052T                    0.013                 1.3
+
+ 0.51                 SC0053T                    0.017                 1.7
+
+ 0.57                 SC0054T                    0.021                 2.1
+
+ 0.64                 SC0055T                    0.026                 2.6
+
+ 0.76                 SC0056T                    0.036                 3.6
+
+ 0.89                 SC0057T                    0.049                 4.9
+
+ 0.95                 SC0058T                    0.056                 5.6
+
+ 1.02                 SC0059T                    0.063                 6.3
+
+ 1.09                 SC0060T                    0.072                 7.2
+
+ 1.14                 SC0061T                    0.078                 7.8
+
+ 1.22                 SC0062T                    0.088                 8.8
+
+ 1.3                  SC0063T                    0.10                  10
+
+ 1.42                 SC0064T                    0.11                  11
+
+ 1.52                 SC0065T                    0.13                  13
+
+ 1.65                 SC0066T                    0.15                  15
+
+ 1.75                 SC0067T                    0.16                  16
+
+ 1.85                 SC0068T                    0.17                  17
+
+ 2.06                 SC0069T                    0.20                  20
+
+ 2.29                 SC0070T                    0.24                  24
+
+ 2.54                 SC0071T                    0.27                  27
+
+ 2.79                 SC0072T                    0.31                  31
+
+ 3.17                 SC0224T                    0.35                  35
+
+Cassettes for the ICC pumps are designed to work with stoppered tubing that ﬁts the MS/CA
+Cassettes, commonly referred to as “3-Stop” tubing. Please visit our website or contact your
+local distributor for more information on available options.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                         16 of 36
+     14. Reglo ICC Serial Command Protocol
+     14.1 Overview
+     The Reglo Digital model pump supports a 9600 baud, 8 data bits, 1 stop bit, no parity,
+     no ﬂow control serial communication protocol for controlling the pump’s operation,
+     as well as setting and getting current pump conﬁguration parameters. This section
+     describes the protocol used with the Reglo ICC model pump.
+     The ICC protocol is backwards-compatible with existing controlling devices which use
+     the Digital protocol. The PC pump-control software uses the protocol described in
+     this document to control Reglo ICC pumps.
+
+
+
+     14.2 Physical Layer
+     The protocol described in this document may be used over USB or RS-232 to communicate with
+     the Reglo ICC pump. The RS-232 link may be composed of:
+      Multiple pumps which have been “daisy-chained” together to form a multi-drop RS-232
+       communications bus. Only one controlling device (i.e. PC) may be connected to this RS-232 bus.
+      Individual channel control for one pump only
+
+
+
+
+     14.3 Message Format
+     All messages are composed of a string of printable ASCII characters. Each message is
+     terminated with a carriage return or carriage return and line feed.
+
+
+
+     14.4 Addressing
+     The Reglo Digital protocol uses an addressing scheme where each pump is assigned a singular
+     address. This addressing is designed to accommodate multiple pumps which have been
+     “daisy-chained” to the same RS-232 bus.
+     The addressing scheme for the protocol described in the document is dependent on the
+     physical layer used for communication. This arrangement allows for the same command
+     deﬁnitions to be used for either RS-232 or USB.
+     When using RS-232 to control the pump in default mode, the addressing scheme of the
+     Reglo Digital is preserved. The address ﬁelds in command messages are used to address
+     individual pumps connected in a daisy chain. RS-232 can also be used to control the individual
+     channels as the USB interface does in which case the address character is used to deﬁne the
+     individual channel. Note that when pumps are connected in a daisy chain conﬁguration for
+     independent channel control, the individual channel control applies to all the pumps.
+     An example of RS232 commands to address individual channels follows:
+      @2      Assign address 2 to the pump
+      2~1     Configures independent channel control, pump 2
+      1H      Channel 1 start (all pumps in a daisy chain)
+      2S      Channel 2 speed setting request returns channel 2 RPM value
+      2~      query channel status returns 1
+      2~0     returns pump to standard channel control
+      2~      query channel status returns 0
+      2H      all channels start
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                  17 of 36
+When using USB to control the pump, the address ﬁelds in command messages are used
+to address individual pump channels. As each USB connection is a point-to-point link
+between the controlling device (PC) and the pump, there is no need to provide pump
+addressing in the communications protocol.
+Some parameters apply only to each pump, and so individual channel addressing is not
+necessary. When using USB, an address must still be provided each of these messages, but
+this address will be ignored.
+
+
+
+14.5 Deﬁnitions
+The following symbols are used to represent ASCII characters in the messages deﬁned in this
+document.
+ [CR]—carriage return (0x0d)
+
+ [LF]—line feed (0x0a)
+
+ [SP]—space (0x20)
+
+ [VB]—vertical bar, or “pipe” (0x7c)
+
+
+
+
+14.6 Data Type Formats
+The following data formats are used in the subsequent message deﬁnitions.
+
+14.6.1 Boolean
+ Width: 1
+
+ Format: A single character indicating True or False.
+
+      0 = False
+
+      1 = True
+
+
+
+14.6.2 Direction
+ Width: 1
+
+ Format: A single character indication direction.
+
+      J = Clockwise
+
+      K = Counter-clockwise
+
+
+
+14.6.3 Discrete Type 1
+ Width: 1 to 4
+
+ Unit: 1
+
+ Range: 0 to 9999
+
+ Format: Up to four characters representing a discrete integer value in base 10.
+   Unused digits are not returned.
+
+14.6.4 Discrete Type 2
+ Width: 4
+
+ Units: 1
+
+ Range: 0 to 9999
+
+ Format: Four characters representing a discrete integer value in base 10. The value is
+   right-justified. Unused digits to the left are zeros.
+
+14.6.5 Discrete Type 3
+ Width: 6
+
+ Range: 0 to 999999
+
+ Format: Six characters in base 10. The value is right-justified. Unused digits to the left
+   are zeros.
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                         18 of 36
+      14.6.6 Discrete Type 4
+       Width: 10
+
+       Range: 0 to 4294967295
+
+       Format: Ten characters in base 10. The value is right-justified. Unused digits to the left
+        are zeros.
+
+      14.6.7 Discrete Type 5
+       Width: 3
+
+       Range: 0 to 999
+
+       Format: Three characters in base 10. The value is right-justified. Unused digits to the
+        left are zeros.
+
+      14.6.8 Discrete Type 6
+       Width: 5
+
+       Range: 0 to 99999
+
+       Format: Five characters in base 10. The value is right-justified. Unused digits to the left
+        are zeros.
+
+      14.6.9 Fractional Type 1
+       Width: Variable
+
+       Format: XXXX.XX—The width of the integer portion of the value is variable. The
+        decimal point and two digits to the right of the decimal point are always provided.
+
+      14.6.10 Volume Type 1
+       Width: 7
+
+       Units: mL
+
+       Format: mmmmEse—Represents the scientific notation of m.mmm x 10se. For example,
+        1.200 x 10-2 is represented with 1200E-2. Note that the decimal point is inferred after
+        the first character.
+           mmmm—4 character mantissa
+
+           E—“E” character
+
+           s—Sign for exponent (+ or -)
+
+           e—Single digit exponent
+
+
+      14.6.11 Time Type 1
+       Width: 1 to 8
+
+       Units: 0.1 second
+
+       Range: 0 to 35,964,000 (0 to 999 hr)
+
+       Format: Up to eight characters representing the time in 0 to 999 hours, with a resolution
+        of 0.1 sec. Unused digits are not returned.
+
+      14.6.12 Time Type 2
+       Width: 8
+
+       Units: 0.1 second
+
+       Range: 0 to 35,964,000 (0 to 999 hr)
+
+       Format: Eight characters representing the time in 0 to 999 hours, with a resolution of
+        0.1 s. The value is right-justified. Unused digits to the left are filled with zeros.
+
+      14.6.13 String
+       Width: Variable
+
+       Range: 0 to 64 characters
+
+       Format: The string is delimited by the delimiting character of the message type that it is
+        contained in. For device command requests, this is [CR]. For data responses, this is [SP].
+        The string cannot contain these characters. Other printable ASCII characters are okay.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                19 of 36
+14.6.14 Language
+ Width: 1
+
+ Range: 0–3
+
+ Format: A single numeric character representing a language as follows:
+
+      0—English
+
+      1—French
+
+      2—Spanish
+
+      3—German
+
+
+
+
+15. Response Messages
+Response messages are sent from the pump to the PC in response to request messages.
+
+15.1 Status response
+A status response message is the default response of the pump to most commands,
+indicating a success or failure of the command.
+Response Message: Status
+
+
+
+
+Fields           Status
+
+
+Char Width          1
+
+ Status: A single ASCII character indicating the execution status of the requested command.
+
+      * (0x2a)—The command was executed successfully.
+
+      # (0x23)—The command was not executed successfully.
+
+      – (0x2d)—A negative response used for some commands, with different meanings
+         for each. See individual direct-addressed command definitions for context.
+      + (0x2b)—A positive response used for some commands, with different meanings
+         for each. See individual direct-addressed command definitions for context.
+
+
+
+15.2 Data response
+A data response is sent when parameter values must be provided in response to a request
+message. Each data response is composed of one or more data parameter values which are
+delimited by spaces.
+
+Response Message: Data
+
+
+                   Data                            Data                                   Data
+Fields           Parameter          [SP]         Parameter               [SP]           Parameter           [CR]   [LF]
+                     1                               2                                      n
+
+Char. Width        Variable      1 (optional)   Variable (optional)   1 (optional)    Variable (optional)    1
+
+
+
+ Data Parameter N—A data value returned by the pump. The format of each data
+  parameter is defined by the request message that a data response message is sent in
+  response to. See each request message definition for the definition associated data
+  response messages.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                    20 of 36
+16. Request Messages
+Request messages are sent from the PC to the pump. Every request message should be
+answered by a response message from the pump.
+
+16.1 Set Pump Address
+This is a specially formatted command used to set the address of each pump. By default, each
+pump uses address 1.
+
+
+
+                  @           Addr             [CR]
+
+
+      @—The “@” character (ASCII 0x40).
+
+      Addr—The new pump address (1–8).
+
+      [CR]—A carriage return character.
+
+
+
+Response
+The response to this command is a status response message.
+
+16.2 Device Command
+A device command is addressed to an individual pump (or channel) to get or set particular
+pump (or channel) parameters.
+
+Response Message: Device Command
+
+
+                                    Data                                     Data                             Data
+                          Command                                                                      …    Parameter            [CR]   [LF]
+Fields         Addr               Parameter                    [VB]        Parameter            [VB]
+                            Code                                                                                n
+                                      1                                        2
+
+Char. Width      1           Variable    Variable (optional) 1 (optional) Variable (optional)    1         Variable (optional)    1      1
+
+
+
+ Addr: The address of a pump channel (1 to 4). For commands which interact with
+  parameters on a per-pump (and not per-channel) basis, this field is ignored. The field
+  must still be provided however. In this case the recommendation is to use a place
+  holder address of 0. In legacy mode, this is a pump address (1 to 8).
+ Command Type: A string, typically one or two characters that indicate the type of command.
+
+ Data Parameters: Optional values which may be provided when setting a parameter value.
+
+ [VB]–A single vertical bar or “pipe” character to delimit data parameters. If a single data
+  parameter is provided, no VB delimiter is required.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                  21 of 36
+Direct-Addressed Command List
+ Ref. #       Command         Function                                                                 Op    Response
+ 1.0                           COMMUNICATIONS MANAGEMENT
+
+                                                                                                             Boolean
+                               Get an integer representing whether (1) or not (0) channel addressing
+ 1.1          ~                                                                                        Get   1 = Channel addressing
+                               is enabled.
+                                                                                                             2 = Legacy
+
+ 1.2          ~                Set whether channel messaging is enabled (1) or not enabled (0).        Set   Boolean
+
+                               Get an integer representing whether (1) or not (0) event messages
+ 1.3          xE                                                                                       Get   Boolean
+                               are enabled.
+ 1.4          xE               Set whether event messages are enabled (1) or not enabled (0).          Set   Boolean
+
+ 1.5          x!               Get an integer representing the version of the serial protocol.         Get   Discrete Type 1
+
+ 2.0                           PUMP DRIVE
+
+                                                                                                             *
+ 2.1          H                Start pump.                                                             Set   - channel setting(s) are not correct or
+                                                                                                             unachievable.
+
+ 2.2          I                Stop pumping.                                                           Set   *
+
+ 2.3          xI               Pause pumping (STOP in RPM or flow rate mode).                          Set   *
+
+ 2.4          xD               Get pump direction.                                                     Get   J (CW) or K(CCW)
+
+ 2.5          J                Set rotation direction to clockwise.                                    Set   *
+
+ 2.6          K                Set rotation direction to counter-clockwise.                            Set   *
+                                                                                                             Parameter #1:
+                                                                                                             C = Cycle count of 0
+                                                                                                             R = Max flow rate exceeded or flow
+                                                                                                             is set to 0
+                               Cause of ” –“ cannot run response = Parameter #1,
+ 2.7          xe                                                                                       Get   V = Max volume exceeded
+                               Limiting value that was exceeded = Parameter #2
+                                                                                                             Parameter #2: Limiting value:
+                                                                                                             C = Value is undefined
+                                                                                                             R = Max flow (mL/min)
+                                                                                                             V = Max vol (mL)
+
+ 3.0                           OPERATIONAL MODES AND SETTINGS
+                                                                                                             L = RPM
+                                                                                                             M = Flow Rate
+                                                                                                             O = Volume (at Rate)
+ 3.1          xM               Get the current channel or pump mode.                                         G = Volume (over Time)
+                                                                                                             Q = Volume+Pause
+                                                                                                             N = Time
+                                                                                                             P = Time+Pause
+ 3.2          L                Set pump/channel to RPM mode.                                           Set   *
+
+ 3.3          M                Set pump/channel to Flow Rate mode.                                     Set   *
+
+ 3.4          O                Set pump/channel to Volume (at rate) mode.                              Set   *
+                                                                                                             *
+ 3.5          G                Set pump/channel to Volume (over time) mode.                            Set   - channel setting(s) are not correct
+                                                                                                             or unachievable.
+ 3.6          Q                Set pump/channel to Volume + Pause mode.                                Set   *
+
+ 3.7          N                Set pump/channel to Time mode.                                          Set   *
+
+ 3.8          P                Set pump/channel to Time + Pause mode.                                  Set   *
+                                                                                                             Boolean
+                               Get flow rate from RPM (S) or flow rate (f) when mode is not RPM
+ 3.9          xf                                                                                       Get   RPM = 0
+                               or flow rate.
+                                                                                                             Flow rate = 1
+ 3.10         xf               Set RPM flow rate not in RPM or flow rate mode Discrete Type 3.         Set   *
+
+ 3.11         S                Gets the current speed setting in RPM.                                  Get   Fractional Type 1
+
+ 3.12         S                RPM mode flow rate setting (0.01 RPM) Discrete Type 3.                  Set   *
+
+ 3.13         f                Get current volume/time flow rate (mL/min).                             Get   Volume Type 1
+
+ 3.14         f                Set RPM flow rate in volume/time mode (mL/min) Volume Type 2.           Set   Volume Type 2
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                        22 of 36
+ Ref. #       Command         Function                                                                  Op    Response
+ 3.0                           OPERATIONAL MODES AND SETTINGS
+
+ 3.15         v                Get the current setting for volume in mL.                                Get   Volume Type 1
+
+ 3.16         v                Set the current setting for volume in mL. Volume Type 2.                 Set   Volume Type 1
+
+ 3.17         xT               Get the current pump run time.                                           Get   Time Type 1
+
+ 3.18         xT               Set current pump run time using Time Type 2.                             Set   *
+
+ 3.19         xP               Get pumping pause time.                                                  Get   Time Type 1
+
+ 3.20         xP               Set pumping pause time using Time Type 2.                                Set   *
+
+ 3.21         “                Get pump cycle count.                                                    Get   Discrete Type 1
+
+ 3.22         “                Set pump cycle count Discrete Type 2.                                    Set   *
+
+ 3.23         ?                Max flow rate achievable with current settings mL/min.                   Get   Text
+
+ 3.24         !                Max flow rate achievable with current settings using calibration.        Get   Text
+                               Get time to dispense at a given volume at a given mL/min flow rate.
+ 3.25         xv                                                                                        Get   Time Type 1 (0.1 sec)
+                               Vol, Volume Type 2; flow rate, Volume Type 2.
+                               Get time to dispense at a given volume at a given RPM. mL,
+ 3.26         xw                                                                                        Get   Time Type 1 (0.1 sec)
+                               Volume Type 2; flow rate, Discrete Type 3.
+ 4.0                           CONFIGURATION
+                               Get the current tubing inside diameter in mm. 2 decimal places
+ 4.1          +                                                                                         Get   4 characters including decimal (mm).
+                               are returned.
+ 4.2          +                Set tubing inside diameter using Discrete Type 2.                        Set   *
+
+ 4.3          %                Get the current backsteps setting.                                       Get   Discrete Type 1
+
+ 4.4          %                Set the current backsteps setting using Discrete Type 2.                 Set   *
+
+ 4.5          0                Resets all user configurable data to default values.                     Set   *
+
+ 5.0                           CALIBRATION
+
+ 5.1          xR               Get direction flow for calibration.                                      Get   DIRECTION, J = CW K = CCW
+
+ 5.2          xR               Set direction flow for calibration J or K using DIRECTION format.        Set   *
+
+ 5.3          xU               Get the target volume to pump for calibrating, mL.                       Get   Volume Type 1
+
+ 5.4          xU               Set the target volume to pump for calibrating using Volume Type 2.       Set   Volume Type 1
+
+ 5.5          xV               Set actual volume measured during calibration, mL Volume Type 2.         Set   Volume Type 1
+
+ 5.6          xW               Get the current calibration time.                                        Get   Time Type 1
+
+ 5.7          xW               Set the current calibration time using Time Type 2.                      Set   *
+
+ 5.8          xX               Get the channel run time since last calibration.                         Get   Time Type 2
+
+ 5.9          xY               Start calibration on a channel(s).                                       Set   *
+
+ 5.10         xZ               Cancel calibration.                                                      Set   *
+
+ 6.0                           SYSTEM
+
+ 6.1          (                Returns the pump firmware version.                                       Get   Discrete Type 2
+                               Change factory roller step volume for a particular roller count and
+ 6.2          xt               tubing size using roller count (6,8,12), Discrete Type 1; index of the   Set   *
+                               tubing diameter (see Table 1), Discrete Type 1; RSV. Volume Type 2.
+ 6.3          xs               Save set roller step settings.                                           Set   *
+
+ 6.4          xu               Reset roller step volume table to defaults.                              Set   *
+
+ 6.5          xN               Set pump name for display under remote control–String.                   Set   *
+
+ 6.6          xS               Get pump serial number.                                                  Get   String
+
+ 6.7          xS               Set pump serial number–String.                                           Set   *
+
+ 6.8          xL               Get the current pump language.                                           Get   Language
+
+ 6.9          xL               Set current pump language–Language.                                      Set   *
+
+ 6.10         xA               Get number of pump channels.                                             Get   Discrete Type 1
+
+ 6.11         xA               Configure number of pump channels. Discrete Type 2.                      Set   *
+
+ 6.12         xB               Get number of rollers for channel.                                       Get   Discrete Type 1
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                       23 of 36
+Ref. #       Command          Function                                                                       Op    Response
+6.0                           SYSTEM
+
+6.13         xB               Set number of rollers for channel. Discrete Type 2.
+
+6.14         xC               Get total number of revolutions since last reset.                              Get   Discrete Type 4
+
+6.15         xG               Get channel total volume pumped since last reset, mL.                          Get   Discrete Type 4
+
+6.16         xJ               Get total time pumped for a channel since last reset.                          Get   *
+
+6.17         A                Set control from the pump user interface.                                      Set   *
+
+6.18         B                Disable pump user interface.                                                   Set   *
+
+                              Write numbers to the pump to display while under external control.
+6.19         D                                                                                               Set   *
+                              –String (<17 characters).
+                              Write letters to the pump to display while under external control
+6.20         DA                                                                                              Set   *
+                              –String(<17 characters).
+                                                                                                                   + running
+6.21         E                Returns whether the pump is currently running or not.                          Get
+                                                                                                                   - stopped
+                              Returns the following fields, each separated by a space:
+                              Pump model description: A text field describing the model of pump.
+                              This description may contain spaces.
+                              Pump software version: The version of software currently running                     String
+6.22         #                in the pump.                                                                   Get   Discrete Type 1
+                              Pump head model type code: A code describing the type of pump                        Discrete Type 1
+                              head installed. The first digit represents the number of channels for the
+                              pump, and the second 2 digits represent the number of rollers. XX if
+                              channels do not have the same number of rollers.
+                              Returns the pump head model type code–A 4 digit code indicating
+                              the ID number of the pump head. The first two digits represent the
+6.23         )                                                                                               Get   Discrete Type 1
+                              number of channels on the head, and the second 2 digits represent the
+                              number of rollers.
+                              Sets the pump head model type code –An up-to 4 digit code setting
+                              the ID number of the pump head. The first two digits encode the number
+                              of channels on the head, the second two digits encode the number of
+6.24         )                                                                                               Set   *
+                              rollers on the head. This command sets all roller counts to the same
+                              value. To individually set roller counts for each channel, use the non-
+                              legacy command designed for this operation. Discrete Type 2.
+6.25         V                Get the current setting for pump time in 1/10 second.                          Get   Discrete Type 1
+
+6.26         V                Set the current setting for pump time in 1/10 second. Discrete Type 2.         Set   *
+
+6.27         VM               Set the current run time setting for dispensing in minutes. Discrete Type 5.   Set   *
+
+6.28         VH               Set the current run time setting for dispensing in hours. Discrete Type 5.     Set   *
+                              Get the low order roller steps. The total number of roller steps which
+6.29         U                                                                                               Get   Discrete Type 3
+                              are dispensed during an operation is computed as:[(u*65536]+(U)].
+6.30         U                Set the high order roller steps. Discrete Type 6.                              Set   *
+                              Get the high order roller steps. The total number of roller steps which
+6.31         u                                                                                               Get   Discrete Type 3
+                              are dispensed during an operation is computed as:[(u*65536]+(U)].
+6.32         u                Set the high order roller steps. Discrete Type 6.                              Set   *
+                              Get the current roller step volume based on the current calibration,
+6.33         r                tubing diameter and roller count. If no calibration has been performed         Get   Volume Type 1-nl
+                              the default volume is returned.
+                              Set the calibrated roller step volume to use for this pump or channel.
+                              This value is used as the calibrated value and is overwritten by
+6.34         r                                                                                               Set   *
+                              subsequent calibrations and reset by changing tubing diameter.
+                              Volume Type 2.
+
+6.35         000000           Reset the pump to discard calibration data, use default roller step volume.    Set   *
+
+6.36         T                Get the current setting for pause time in 1/10 second.                         Get   Discrete Type 1
+
+6.37         T                Set the current setting for pause time in 1/10 second. Discrete Type 2.        Set   *
+
+6.38         TM               Set the current setting for pause time in minutes. Discrete Type 5.            Set   *
+
+6.39         TH               Set the current setting for pause time in hours. Discrete Type 5.              Set   *
+                                                                                                                   Parameter 1
+                                                                                                                   String-decimals
+6.40         :                Get the total volume dispensed since the last reset in μL, mL or liters.       Get
+                                                                                                                   Parameter 2
+                                                                                                                   String-units
+6.41         *                Saves the current pump settings values to memory.                              Set   *
+                                                                                                                   - open
+6.42         C                Get the current state of the foot switch.                                      Get
+                                                                                                                   + grounded
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                24 of 36
+16.3 Tube Diameter Index
+ Index       Tube Diameter (mm)               Index        Tube Diameter (mm)
+
+ 0           0.13                             13           1.14
+
+ 1           0.19                             14           1.22
+
+ 2           0.25                             15           1.30
+
+ 3           0.38                             16           1.42
+
+ 4           0.44                             17           1.52
+
+ 5           0.51                             18           1.65
+
+ 6           0.57                             19           1.75
+
+ 7           0.64                             20           1.85
+
+ 8           0.76                             21           2.06
+
+ 9           0.89                             22           2.29
+
+ 10          0.95                             23           2.54
+
+ 11          1.02                             24           2.79
+
+ 12          1.09                             25           3.17
+
+
+
+
+17. Event Messages
+Event messages are asynchronous (unrequested) messages sent by the pump to the PC.
+
+Response Message: Device Command
+
+
+                                             Data                             Data                                   Data
+                  Event         Event                                                                         …    Parameter            [CR]   [LF]
+Fields                                     Parameter              [VB]      Parameter            [VB]
+                Indicator       Code                                                                                   n
+                                               1                                2
+
+Char Width          1             1       Variable (optional) 1 (optional) Variable (optional) 1 (optional)       Variable (optional)    1      1
+
+
+
+
+ Event indicator: A single caret (^) character (ASCII 0x53) which identifies this message as
+     an event message.
+ Event code: A string which identifies a specific type of event.
+
+ Data Parameter N—A data value associated with the event. There may be none or
+     several of these. These will vary by event type.
+ [VB]—A single vertical bar or “pipe” character to delimit data parameters.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                         25 of 36
+17.1 Channel stop
+This event message is generated when a pumping operation is complete due to the expiration of a time, volume or cycle counter. This event
+message is not generated when a stop command is sent to the pump.
+ Event Code: X
+
+ Data Parameter 1: Channel
+
+     Description: The channel that the stop event occurred on.
+
+     Range: 1–8
+
+     Format: A single character representing the channel number.
+
+ Data Parameter 2: Cause
+
+     Description: The reason that the stop event occurred.
+
+     Format: A single character code representing the cause.
+
+            A—Pumping complete (expiration of timer or volume limit reached).
+            B—Calibration pumping complete.
+            1—Manual (emergency) stop event (user presses stop button on the pump).
+            2—Over temperature condition.
+            3—Over current condition.
+
+
+
+17.2 Channel status update
+This event message is generated periodically for each channel when the pump is on to indicate that the pump is “alive” and responsive. It is also
+responsible for providing updates on the state of an in-progress pumping operation.
+ Event Code: U
+
+ Data Parameter 1: Channel
+
+     Description: The channel associated with this status update event message.
+
+     Range: 1–8
+
+     Format: A single character representing the channel number.
+
+ Data Parameter 2: Status
+
+     Description: The current status of this channel.
+
+     Format: A single character representing the status.
+
+            A—Pumping
+            B—Paused between cycles
+            C—Stopped
+            D—Calibration pumping
+            E—Calibration pending (waiting for measured value to be entered)
+ Data Parameter 3: Time remaining
+
+     Description: The time remaining in the current cycle. If pumping, this is the amount of pump time remaining. If paused, this is the
+       amount of pause time remaining.
+     Units: seconds
+
+     Format: Discrete Type 4
+
+ Data Parameter 4: Volume dispensed
+
+     Description: The volume which has already been dispensed in the current cycle.
+
+     Units: microliters (μL)
+
+     Format: Discrete Type 4
+
+ Data Parameter 5: Cycles remaining
+
+     Description: The number of cycles left to pump. The current cycle is included in
+       the count.
+     Format: Discrete Type 2
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                  26 of 36
+18. Examples
+  18.1 Communication Management
+
+18.1.1 Get serial protocol version
+
+      0 ![CR]                    REQUEST
+
+      2[CR][LF                   RESPONSE
+
+The protocol version supported the type is version “2,” the version defined in this document.
+
+
+
+18.1.2 Event message enable
+Get the current enable state of event messages.           Enable event messages.
+
+      0xE[CR]                    REQUEST                         0xE1[CR]                   REQUEST
+
+      0[CR][LF]                  RESPONSE                        *                          RESPONSE
+
+Event messages are disabled.
+
+
+
+  18.2 Pump Drive
+
+18.2.1 Start pumping
+Start pumping on channel 2:
+
+
+      2H[CR]                     REQUEST
+
+      *                          RESPONSE
+
+
+
+18.2.2 Stop pumping
+Stop pumping on channel 3:
+
+
+      3I[CR]                     REQUEST
+
+      *                          RESPONSE
+
+
+
+18.2.3 Get direction
+Get direction of channel 1:
+
+
+      1xD[CR]                    REQUEST
+
+      K[CR][LF]                  RESPONSE
+
+The direction of channel 1 is counter-clockwise.
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                 27 of 36
+18.2.4 Set direction
+Set direction to clockwise:
+
+
+      1J[CR]                     REQUEST
+
+      *                          RESPONSE
+
+
+
+
+  18.3 Modes and Settings
+
+18.3.1 Operational pumping mode                The current mode of channel 1 is RPM.
+Get the current mode of channel 1.             Set the mode of channel 4 to Time.
+
+
+      1xM[CR]                    REQUEST             4N[CR]                     REQUEST
+
+      L[CR][LF]                  RESPONSE            *                          RESPONSE
+
+
+
+18.3.2 Pumping rate (drive speed)
+Set drive speed of channel 2 to 123 RPM:       Get the current drive speed of channel 4:
+
+
+      2S012300[CR]               REQUEST             4S[CR]                     REQUEST
+
+      *                          RESPONSE            12.30[CR][LF]              RESPONSE
+
+                                               The current drive speed of channel 4 is 12.3 RPM.
+
+
+
+18.3.3 Pumping rate (volume/time)
+Set pumping rate of channel 1 to 1.3 μL/min:   Get current pumping rate of channel 4:
+
+
+      1f1300-3[CR]               REQUEST             4f[CR]                     REQUEST
+
+      1300E-3[CR][LF]            RESPONSE            3250E+1[CR][LF]            RESPONSE
+
+                                               The current pumping rate of channel 4 is 32.5 mL/min.
+
+
+
+18.3.4 Volume
+Set the volume of channel 4 to 300 mL:         Get the volume of channel 2:
+
+
+      4v3000+2[CR]               REQUEST             2v[CR]                     REQUEST
+
+      3000E+2[CR][LF]            RESPONSE            1300E-3[CR][LF]            RESPONSE
+
+                                               The volume of channel 3 is 1.3 μL.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                 28 of 36
+18.3.5 Run time
+Set the run time of channel 1 to 150 seconds:      Get the run time of channel 2:
+
+
+      1xT00001500[CR]               REQUEST              2xT[CR]                       REQUEST
+
+      *                             RESPONSE             20[CR][LF]                    RESPONSE
+
+                                                   The current run time of channel 2 is 20 seconds.
+
+
+
+18.3.6 Pause time
+Set the pause time of channel 1 to 1500 seconds:   Get the pause time of channel 2:
+
+
+      1xP00001500[CR]               REQUEST              2xP[CR]                       REQUEST
+
+      *                             RESPONSE             20[CR][LF]                    RESPONSE
+
+                                                   The current pause time of channel 2 is 20 seconds.
+
+
+
+18.3.7 Cycle Count
+Set the cycle count of channel 1 to 23:            Get the cycle count of channel 2:
+
+
+      1”0023[CR]                    REQUEST              2”[CR]                        REQUEST
+
+      *                             RESPONSE             20[CR][LF]                    RESPONSE
+
+                                                   The cycle count of channel 2 is 20.
+
+
+
+
+  18.4 Conﬁguration
+
+18.4.1 Tubing Inside Diameter
+Set the tubing diameter of channel 1 to 0.13 mm:   Get the tubing diameter of channel 2:
+
+
+      1+0013[CR]                    REQUEST              2+CR]                         REQUEST
+
+      *                             RESPONSE             3.17[SP]mm[CR][LF]            RESPONSE
+
+                                                   The channel 2 tubing diameter is 3.17 mm.
+
+
+
+18.4.2 Backsteps
+Set the channel 1 backsteps to 0:                  Get the backsteps of channel 2:
+
+
+      1%0000[CR]                    REQUEST              2%CR]                         REQUEST
+
+      *                             RESPONSE             0[CR][LF]                     RESPONSE
+
+                                                   The backstep setting for channel 2 is 0.
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                  29 of 36
+  18.5 Calibration
+
+18.5.1 Volume (target)
+Set the target calibration volume for
+channel 4 to 100 mL.                                    Get the target calibration volume for channel 3.
+
+
+      4xU1000+2[CR]               REQUEST                     3xU[CR]                      REQUEST
+
+      1000E+2[CR][LF]             RESPONSE                    1000E+0[CR][LF]              RESPONSE
+
+                                                        The target calibration volume for channel 3 is 1 mL.
+
+
+
+18.5.2 Volume (measured)
+Set the measured calibration volume for
+channel 4 to 101 mL.                                    Get the measured calibration volume for channel 3.
+
+
+      4xV1010+2[CR]               REQUEST                     3xV[CR]                      REQUEST
+
+      1010E+2[CR][LF]             RESPONSE                    1020E+2[CR][LF]              RESPONSE
+
+                                                        The measured calibration volume for channel 3 is 102 mL.
+
+
+
+18.5.3 Time
+Set the calibration time for channel 1 to 30 seconds.   Get the calibration time setting for channel 3.
+
+
+      1xW00000030[CR]             REQUEST                     3xW[CR]                      REQUEST
+
+      *                           RESPONSE                    30[CR][LF]                   RESPONSE
+
+                                                        The calibration time for channel 3 is 30 seconds.
+
+
+
+18.5.4 Get time since last calibration
+Get the time since channel 3 was last calibrated.
+
+
+      3xX[CR]                     REQUEST
+
+      03596400[CR][LF]            RESPONSE
+
+Channel 3 was last calibrated 3,596,400 seconds (999 hours) ago.
+
+
+
+18.5.5 Start calibration
+Start calibration on channel 2.
+
+
+      2xY[CR]                     REQUEST
+
+      *                           RESPONSE
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                             30 of 36
+18.5.6 Cancel calibration in progress
+Stop calibration on channel 2.
+
+
+      2xZ[CR]                    REQUEST
+
+      *                          RESPONSE
+
+
+
+
+  18.6 System
+
+18.6.1 Get pump ﬁrmware version
+
+      0([CR]                     REQUEST
+
+      0114[CR][LF]               RESPONSE
+
+The pump firmware version is 1.14.
+
+
+
+18.6.2 Set pump’s temporary display name
+Set the pump’s display name to “Reagent A.”
+
+
+      0xNReagent A[CR]           REQUEST
+
+      *                          RESPONSE
+
+
+
+18.6.3 Serial number
+Set the pump’s serial number to 12345ABC.     Get the pump’s serial number.
+
+
+      0xS[CR]                    REQUEST            0xS12345ABC[CR]           REQUEST
+
+      *                          RESPONSE           12345ABC[CR][LF]          RESPONSE
+
+
+
+18.6.4 Language
+Set the pump language to German.              Get the current pump language setting.
+
+
+      0xL3[CR]                   REQUEST            0xL[CR]                   REQUEST
+
+      *                          RESPONSE           0[CR][LF]                 RESPONSE
+
+                                              The current pump language setting is English.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                        31 of 36
+18.6.5 Channel count
+Set the pump channel count to 4.                       Get the pump channel count.
+
+
+      0xA0004[CR]                   REQUEST                   0xA[CR]                        REQUEST
+
+      *                             RESPONSE                  3[CR][LF]                      RESPONSE
+
+                                                       The pump channel count is 3.
+
+
+
+18.6.6 Roller count
+Set the roller count for channel 4 to 6 rollers.       Get the roller count for channel 1.
+
+
+      4xB0006[CR]                                             1xB[CR]                        REQUEST
+                                    REQUEST
+
+      *                                                       12[CR][LF]                     RESPONSE
+                                    RESPONSE
+
+                                                       The roller count for channel 1 is 12.
+
+
+
+
+18.6.7 Total Revolutions
+Get the total revolutions for channel 3.
+
+
+      3xC[CR]                       REQUEST
+
+      0000001511[CR][LF]            RESPONSE
+
+The total revolution count for channel 3 is 1511.
+
+
+
+18.6.8 Volume total
+Get the total volume count for channel 3.
+
+
+      3xG[CR]                       REQUEST
+
+      0000001511[CR][LF]            RESPONSE
+
+The total volume count for channel 3 is 1511 mL.
+
+
+
+18.6.9 Time total
+Get the total pumping time count for channel 3.
+
+
+      3xJ[CR]                       REQUEST
+
+      0000001511[CR][LF]            RESPONSE
+
+The total pumping time count for channel 3 is 1511 seconds.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                  32 of 36
+  18.7 Events
+
+18.7.1 Channel stop
+
+      ^X2|A[CR][LF]              EVENT
+
+A pump complete event occurred on channel 2.
+
+
+
+18.7.2 Channel status update
+
+      ^U3|A|0000000000|0000100000|0000[CR][LF]              EVENT
+
+Channel 3 is currently pumping. This channel is probably in volume
+mode, as volume is the only provided ﬁeld here. There are 100 mL left
+to pump in the operation.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                  33 of 36
+19. Regulatory Information
+
+  19.1 Manufacturing Information
+The Declaration of Conformity (DoC) includes the following information:
+
+ Requirement                                                            Content
+ Name and address of manufacturer                                       See EC Declaration of Conformity
+
+ Name and address of person responsible for Technical File              See EC Declaration of Conformity
+
+ Place and date of declaration                                          See EC Declaration of Conformity
+
+ Identity of person authorized to sign DoC                              See EC Declaration of Conformity
+
+
+
+
+  19.2 CE Conformity
+This product complies with the European directives listed in the table below. A copy of the Declaration of Conformity is
+available on request by contacting ismatec.support@coleparmer.com.
+
+ Directive                                                              Title
+ 2006/95/EC                                                             Low Voltage Directive (LVD)
+
+ 2004/108/EC                                                            Electromagnetic Compatibility Directive (EMC)
+
+ 2011/65/EU                                                             Restriction of the Use of Certain Hazardous Substances Directive (RoHS)
+
+
+
+
+  19.3 International Standards
+This product fulﬁlls the requirements of the following standards:
+
+ Standard                                            Symbol                                       Description
+
+                                                                                                  Safety requirements for electrical equipment
+ EN 61010-1, IEC 61010-1, UL 61010-1,                                                             for measurement, control, and laboratory use.
+ CAN/CSA-C22.2 No. 61010-1                                                                        Conforms to UL Std 61010-1. Certified to
+                                                                                                  CAN/CSA C22.2 Std No. 61010-1.
+
+
+
+                                                                                                  Tested to the requirements of CAN/CSA-C22.2 No.
+ CAN/CSA-C22.2 No. 61010-1                                                                        61010-1, second edition including amendment 1or
+                                                                                                  a later version of the same testing requirements.
+
+
+
+
+                                                                                                  EC Directive – Waste Electrical and Electronic
+ 2002/96/EC
+                                                                                                  Equipment (WEEE).
+
+
+
+                                                                                                  EMC emissions and immunity requirements for
+ EN 61326-1, IEC 61326-1                             None                                         electrical equipment for measurement, control
+                                                                                                  and laboratory use.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                                            34 of 36
+  19.4 CE Marking
+The CE marking and the corresponding Declaration of Conformity is valid for the instrument when it is:
+ Used as a stand-alone unit, or
+
+ Connected to other CE marked instruments, or
+
+ Connected to other products recommended or described in the user documentation, and
+
+ Used in the same state as it was delivered from ISMATEC®, except for alterations described in the user documentation.
+
+
+
+The Declaration of Conformity is valid only for systems that are marked with the CE-marking:
+
+
+
+
+  19.5 Connected equipment
+Equipment connected to the Reglo ICC should meet the safety requirements of EN 61010-1/IEC 61010-1, or relevant harmonized
+standards. Within EU, connected equipment must be CE marked.
+
+
+
+
+REGLO ICC - ENGLISH , REV. D, 14-036-E                                                                                       35 of 36
+For ordering and technical support, please contact:
+
+(US & Canada only) Toll Free 1-800-MASTERFLEX | 1-847-637-3739          *EN809 Manufactured by:
+                                                                 Cole-Parmer Instrument Company
+(Outside US & Canada) 1-847-549-7600 | 1-847-381-7050
+                                                                     28W092 Commercial Avenue,
+www.masterﬂex.com | techinfo@masterﬂex.com                                     Barrington, IL 60010
+

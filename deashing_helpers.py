@@ -17,6 +17,7 @@ VIDEO_FILENAME = "output_video.mp4"
 BATH_TEMPERATURE_FILENAME = "bath_temperature.csv"
 RINSE_DATA_FILENAME = "rinse_data.csv"
 RINSE_BATH_TEMPERATURE_FILENAME = "rinse_bath_temperature.csv"
+IMAGES_FOLDER_NAME = "images"
 
 USB_PORT_GLOBS = ("/dev/ttyUSB*", "/dev/ttyACM*")
 USB_PORT_MARKERS = ("USB", "ACM")
@@ -140,6 +141,7 @@ class MasterflexPump:
     CLOCKWISE = "J"
     COUNTERCLOCKWISE = "K"
     COMMAND_DELAY_SECONDS = 1
+    MAX_RUN_TIME_SECONDS = 359999.9
 
     def __init__(self, connection, address=DEFAULT_ADDRESS):
         self.connection = connection
@@ -172,9 +174,11 @@ class MasterflexPump:
             pump = cls.open(port, timeout=cls.DETECTION_TIMEOUT_SECONDS)
             response = pump.enable_remote()
             if response in (cls.ACK, cls.NOT_IN_REMOTE_MODE):
-                return pump
+                status = pump.read_status()
+                if status["address"] == pump.address:
+                    return pump
             pump.close()
-        except (OSError, RuntimeError, serial.SerialException, UnicodeDecodeError):
+        except (OSError, RuntimeError, serial.SerialException, UnicodeDecodeError, ValueError):
             if pump is not None:
                 pump.close()
 
@@ -193,6 +197,24 @@ class MasterflexPump:
         if scaled_percent < 0:
             raise ValueError("Percent speed must be greater than or equal to zero")
         return f"{scaled_percent:05d}"
+
+    @classmethod
+    def format_time_seconds(cls, seconds):
+        seconds = float(seconds)
+        if not 0 < seconds <= cls.MAX_RUN_TIME_SECONDS:
+            raise ValueError(
+                f"Run time must be greater than zero and no more than "
+                f"{cls.MAX_RUN_TIME_SECONDS} seconds"
+            )
+
+        total_tenths = round(seconds * 10)
+        if total_tenths == 0:
+            raise ValueError("Run time must round to at least 0.1 seconds")
+
+        hours, remainder = divmod(total_tenths, 36000)
+        minutes, remainder = divmod(remainder, 600)
+        whole_seconds, tenths = divmod(remainder, 10)
+        return f"{hours:02d}{minutes:02d}{whole_seconds:02d}{tenths}"
 
     def build_command(self, command, parameter=None, address=None):
         if address is None:
@@ -251,6 +273,12 @@ class MasterflexPump:
     def set_speed(self, rpm):
         return self.set_speed_rpm(rpm)
 
+    def set_time_mode(self):
+        return self.require_ack(self.command("N"))
+
+    def set_run_time_seconds(self, seconds):
+        return self.require_ack(self.command("RV", self.format_time_seconds(seconds)))
+
     def start(self):
         return self.command("H")
 
@@ -264,8 +292,16 @@ class MasterflexPump:
         return self.command(self.COUNTERCLOCKWISE)
 
     def read_status(self):
-        response = self.query("RC")
-        address, running, counterclockwise = (int(value.strip()) for value in response.split(","))
+        fields = self.query("RC").split(",")
+        if len(fields) != 3:
+            raise ValueError("Unexpected Masterflex status response")
+
+        address, running, counterclockwise = (int(value.strip()) for value in fields)
+        if not self.MIN_ADDRESS <= address <= self.MAX_ADDRESS:
+            raise ValueError("Unexpected Masterflex address in status response")
+        if running not in (0, 1) or counterclockwise not in (0, 1):
+            raise ValueError("Unexpected Masterflex status values")
+
         return {
             "address": address,
             "running": bool(running),
@@ -521,6 +557,9 @@ class MasterflexRegloICCPump:
     PARAMETER_DELIMITER = "|"
 
     DEFAULT_ADDRESS = 0
+    DEFAULT_PUMP_ADDRESS = 1
+    MIN_PUMP_ADDRESS = 1
+    MAX_PUMP_ADDRESS = 8
     STATUS_OK = "*"
     STATUS_ERROR = "#"
     STATUS_NEGATIVE = "-"
@@ -567,7 +606,8 @@ class MasterflexRegloICCPump:
         pump = None
         try:
             pump = cls.open(port, timeout=cls.DETECTION_TIMEOUT_SECONDS)
-            if pump.get_protocol_version():
+            if pump.get_protocol_version() == "2":
+                pump.initialize_independent_channel_control()
                 return pump
             pump.close()
         except (OSError, RuntimeError, serial.SerialException, UnicodeDecodeError, ValueError):
@@ -644,9 +684,27 @@ class MasterflexRegloICCPump:
         return response
 
     def set_address(self, address):
+        address = int(address)
+        if not self.MIN_PUMP_ADDRESS <= address <= self.MAX_PUMP_ADDRESS:
+            raise ValueError("Reglo ICC pump address must be between 1 and 8")
+
         self.connection.reset_input_buffer()
         self.connection.write(f"@{address}{self.TERMINATOR}".encode(self.COMMAND_ENCODING))
-        return self.require_ok(self.connection.readline().decode(self.RESPONSE_ENCODING).strip())
+        response = self.require_ok(
+            self.connection.readline().decode(self.RESPONSE_ENCODING).strip()
+        )
+        self.address = address
+        return response
+
+    def initialize_independent_channel_control(self, pump_address=DEFAULT_PUMP_ADDRESS):
+        """Configure RS-232 addressing so addresses 1-4 select pump channels.
+
+        USB connections already interpret the address field as a channel, but
+        the same setup commands are accepted there and keep initialization
+        consistent across USB and RS-232 connections.
+        """
+        self.set_address(pump_address)
+        return self.set_channel_addressing_enabled(True)
 
     def get_channel_addressing_enabled(self):
         return self.command("~") == "1"
@@ -735,7 +793,21 @@ class MasterflexRegloICCPump:
         return self.parse_volume_response(self.command("v", address=self.address_for_channel(channel)))
 
     def set_volume_ml(self, volume, channel=None):
-        return self.command("v", self.format_volume_parameter(volume), address=self.address_for_channel(channel))
+        response = self.command(
+            "v",
+            self.format_volume_parameter(volume),
+            address=self.address_for_channel(channel),
+        )
+        if response == self.STATUS_ERROR:
+            raise RuntimeError(f"Reglo ICC command failed: {response}")
+
+        returned_volume = self.parse_volume_response(response)
+        if not math.isclose(returned_volume, float(volume), rel_tol=1e-9, abs_tol=1e-12):
+            raise RuntimeError(
+                f"Reglo ICC returned unexpected volume: requested {volume} mL, "
+                f"received {returned_volume} mL"
+            )
+        return returned_volume
 
     def get_run_time_seconds(self, channel=None):
         return self.parse_time_seconds(self.command("xT", address=self.address_for_channel(channel)))
@@ -1157,6 +1229,9 @@ def create_run_paths(resin_name=None):
         except FileExistsError:
             run_number += 1
 
+    images_folder = os.path.join(run_folder, IMAGES_FOLDER_NAME)
+    os.makedirs(images_folder)
+
     if resin_label:
         data_filename = f"{run_folder_name}-data.csv"
         log_filename = f"{run_folder_name}-log.txt"
@@ -1177,6 +1252,7 @@ def create_run_paths(resin_name=None):
         "data_file": os.path.join(run_folder, data_filename),
         "log_file": os.path.join(run_folder, log_filename),
         "video_file": os.path.join(run_folder, video_filename),
+        "images_folder": images_folder,
         "bath_temperature_file": os.path.join(run_folder, bath_temperature_filename),
         "rinse_data_file": os.path.join(run_folder, rinse_data_filename),
         "rinse_bath_temperature_file": os.path.join(run_folder, rinse_bath_temperature_filename),
