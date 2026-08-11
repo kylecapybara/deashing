@@ -1,5 +1,5 @@
-# originally written by David Brown
-# heavily modified by Kyle Wodehouse
+# Sugar deashing python script
+# written by Kyle Wodehouse & David Brown
 
 import datetime
 import os

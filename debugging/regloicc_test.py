@@ -2,7 +2,7 @@ import time
 
 import serial
 
-from greg_program_v10 import find_reglo_icc_pump
+from greg_program_v11 import find_reglo_icc_pump
 
 
 CHANNEL = 1

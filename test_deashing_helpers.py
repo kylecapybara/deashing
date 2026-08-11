@@ -27,7 +27,7 @@ except ModuleNotFoundError:
     sys.modules["serial.tools.list_ports"] = list_ports_module
 
 from deashing_helpers import AccumetMeter, MasterflexPump, MasterflexRegloICCPump, find_devices
-from greg_program_v10 import prompt_yes_no_default_yes
+from greg_program_v11 import prompt_yes_no_default_yes
 
 
 class FakeSerialConnection:

@@ -1,0 +1,368 @@
+Reglo ICC handshake probe
+Started: 2026-08-10T12:25:20
+Host: Linux-6.11.0-26-generic-x86_64-with-glibc2.39
+Python: 3.12.3
+pyserial: 3.5
+Working directory: /home/esl-e302-259/Desktop/deashing dev
+Log file: /home/esl-e302-259/Desktop/deashing dev/reglo_icc_handshake_20260810_122520.log
+Detected serial ports:
+- /dev/ttyACM0 | ISMATEC Reglo ICC | USB VID:PID=265C:0001 LOCATION=2-1.5.2:1.0
+- /dev/ttyS0
+- /dev/ttyS1
+- /dev/ttyS10
+- /dev/ttyS11
+- /dev/ttyS12
+- /dev/ttyS13
+- /dev/ttyS14
+- /dev/ttyS15
+- /dev/ttyS16
+- /dev/ttyS17
+- /dev/ttyS18
+- /dev/ttyS19
+- /dev/ttyS2
+- /dev/ttyS20
+- /dev/ttyS21
+- /dev/ttyS22
+- /dev/ttyS23
+- /dev/ttyS24
+- /dev/ttyS25
+- /dev/ttyS26
+- /dev/ttyS27
+- /dev/ttyS28
+- /dev/ttyS29
+- /dev/ttyS3
+- /dev/ttyS30
+- /dev/ttyS31
+- /dev/ttyS4
+- /dev/ttyS5
+- /dev/ttyS6
+- /dev/ttyS7
+- /dev/ttyS8
+- /dev/ttyS9
+- /dev/ttyUSB0 | USB Serial Converter - USB Serial Converter | USB VID:PID=0403:6001 SER=FTESCC4N LOCATION=1-1.3
+- /dev/ttyUSB1 | USB Serial Converter - USB Serial Converter | USB VID:PID=0403:6001 SER=FTEFJUMJ LOCATION=2-1.4
+- /dev/ttyUSB2 | USB Serial Converter - USB Serial Converter | USB VID:PID=0403:6001 SER=FTESCFTL LOCATION=2-1.6
+- /dev/ttyUSB3 | FT232R USB UART - FT232R USB UART | USB VID:PID=0403:6001 SER=AV0LFZTF LOCATION=2-1.5.4
+- /dev/ttyUSB4 | FT232R USB UART - FT232R USB UART | USB VID:PID=0403:6001 SER=AB0PURVM LOCATION=2-1.5.1
+Ports selected for survey: ['/dev/ttyACM0', '/dev/ttyS0', '/dev/ttyS1', '/dev/ttyS10', '/dev/ttyS11', '/dev/ttyS12', '/dev/ttyS13', '/dev/ttyS14', '/dev/ttyS15', '/dev/ttyS16', '/dev/ttyS17', '/dev/ttyS18', '/dev/ttyS19', '/dev/ttyS2', '/dev/ttyS20', '/dev/ttyS21', '/dev/ttyS22', '/dev/ttyS23', '/dev/ttyS24', '/dev/ttyS25', '/dev/ttyS26', '/dev/ttyS27', '/dev/ttyS28', '/dev/ttyS29', '/dev/ttyS3', '/dev/ttyS30', '/dev/ttyS31', '/dev/ttyS4', '/dev/ttyS5', '/dev/ttyS6', '/dev/ttyS7', '/dev/ttyS8', '/dev/ttyS9', '/dev/ttyUSB0', '/dev/ttyUSB1', '/dev/ttyUSB2', '/dev/ttyUSB3', '/dev/ttyUSB4']
+Baud rates selected for survey: [9600]
+Safety: the survey and ICC fingerprint contain queries only; --try-setup can change address/channel configuration but never sends pump-motion commands.
+
+=== Port /dev/ttyACM0 at 9600 baud, 8-N-1, no flow control ===
+TX documented protocol-version query at per-pump address 0 [CR]: b'0x!\r'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 1 [CR]: b'1x!\r'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 2 [CR]: b'2x!\r'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 3 [CR]: b'3x!\r'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 4 [CR]: b'4x!\r'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 5 [CR]: b'5x!\r'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 6 [CR]: b'6x!\r'
+RX: b'#'
+Result: command rejected
+TX documented protocol-version query at legacy pump address 7 [CR]: b'7x!\r'
+RX: b'#'
+Result: command rejected
+TX documented protocol-version query at legacy pump address 8 [CR]: b'8x!\r'
+RX: b'#'
+Result: command rejected
+TX current-driver short query at address 0 (bare ! is a flow query in v2) [CR]: b'0!\r'
+RX: b'#'
+Result: response to bare ! query (not an ICC identity signal)
+TX current-driver short query at address 1 (bare ! is a flow query in v2) [CR]: b'1!\r'
+RX: b'12.560 ml/min\r\n'
+Result: response to bare ! query (not an ICC identity signal)
+TX protocol-version query without an address [CR]: b'x!\r'
+RX: b'#'
+Result: command rejected
+TX channel-addressing-mode query at address 0 [CR]: b'0~\r'
+RX: b'1\r\n'
+Result: valid channel-addressing mode response
+TX channel-addressing-mode query at address 1 [CR]: b'1~\r'
+RX: b'1\r\n'
+Result: valid channel-addressing mode response
+TX pump serial-number query at address 0 [CR]: b'0xS\r'
+RX: b'E17000382\r\n'
+Result: printable response
+TX documented protocol-version query at per-pump address 0 [CRLF]: b'0x!\r\n'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 1 [CRLF]: b'1x!\r\n'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 2 [CRLF]: b'2x!\r\n'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 3 [CRLF]: b'3x!\r\n'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 4 [CRLF]: b'4x!\r\n'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 5 [CRLF]: b'5x!\r\n'
+RX: b'2\r\n'
+Result: protocol-version 2 signal
+TX documented protocol-version query at legacy pump address 6 [CRLF]: b'6x!\r\n'
+RX: b'#'
+Result: command rejected
+TX documented protocol-version query at legacy pump address 7 [CRLF]: b'7x!\r\n'
+RX: b'#'
+Result: command rejected
+TX documented protocol-version query at legacy pump address 8 [CRLF]: b'8x!\r\n'
+RX: b'#'
+Result: command rejected
+TX current-driver short query at address 0 (bare ! is a flow query in v2) [CRLF]: b'0!\r\n'
+RX: b'#'
+Result: response to bare ! query (not an ICC identity signal)
+TX current-driver short query at address 1 (bare ! is a flow query in v2) [CRLF]: b'1!\r\n'
+RX: b'12.560 ml/min\r\n'
+Result: response to bare ! query (not an ICC identity signal)
+TX protocol-version query without an address [CRLF]: b'x!\r\n'
+RX: b'#'
+Result: command rejected
+TX channel-addressing-mode query at address 0 [CRLF]: b'0~\r\n'
+RX: b'1\r\n'
+Result: valid channel-addressing mode response
+TX channel-addressing-mode query at address 1 [CRLF]: b'1~\r\n'
+RX: b'1\r\n'
+Result: valid channel-addressing mode response
+TX pump serial-number query at address 0 [CRLF]: b'0xS\r\n'
+RX: b'E17000382\r\n'
+Result: printable response
+
+=== Port /dev/ttyS0 at 9600 baud, 8-N-1, no flow control ===
+TX documented protocol-version query at per-pump address 0 [CR]: b'0x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 1 [CR]: b'1x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 2 [CR]: b'2x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 3 [CR]: b'3x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 4 [CR]: b'4x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 5 [CR]: b'5x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 6 [CR]: b'6x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 7 [CR]: b'7x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 8 [CR]: b'8x!\r'
+RX: b''
+Result: no response
+TX current-driver short query at address 0 (bare ! is a flow query in v2) [CR]: b'0!\r'
+RX: b''
+Result: no response
+TX current-driver short query at address 1 (bare ! is a flow query in v2) [CR]: b'1!\r'
+RX: b''
+Result: no response
+TX protocol-version query without an address [CR]: b'x!\r'
+RX: b''
+Result: no response
+TX channel-addressing-mode query at address 0 [CR]: b'0~\r'
+RX: b''
+Result: no response
+TX channel-addressing-mode query at address 1 [CR]: b'1~\r'
+RX: b''
+Result: no response
+TX pump serial-number query at address 0 [CR]: b'0xS\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at per-pump address 0 [CRLF]: b'0x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 1 [CRLF]: b'1x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 2 [CRLF]: b'2x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 3 [CRLF]: b'3x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 4 [CRLF]: b'4x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 5 [CRLF]: b'5x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 6 [CRLF]: b'6x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 7 [CRLF]: b'7x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 8 [CRLF]: b'8x!\r\n'
+RX: b''
+Result: no response
+TX current-driver short query at address 0 (bare ! is a flow query in v2) [CRLF]: b'0!\r\n'
+RX: b''
+Result: no response
+TX current-driver short query at address 1 (bare ! is a flow query in v2) [CRLF]: b'1!\r\n'
+RX: b''
+Result: no response
+TX protocol-version query without an address [CRLF]: b'x!\r\n'
+RX: b''
+Result: no response
+TX channel-addressing-mode query at address 0 [CRLF]: b'0~\r\n'
+RX: b''
+Result: no response
+TX channel-addressing-mode query at address 1 [CRLF]: b'1~\r\n'
+RX: b''
+Result: no response
+TX pump serial-number query at address 0 [CRLF]: b'0xS\r\n'
+RX: b''
+Result: no response
+
+=== Port /dev/ttyS1 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS10 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS11 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS12 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS13 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS14 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS15 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS16 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS17 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS18 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS19 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS2 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS20 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS21 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS22 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS23 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS24 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS25 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS26 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS27 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS28 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS29 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS3 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS30 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS31 at 9600 baud, 8-N-1, no flow control ===
+Could not open port: SerialException: Could not configure port: (5, 'Input/output error')
+
+=== Port /dev/ttyS4 at 9600 baud, 8-N-1, no flow control ===
+TX documented protocol-version query at per-pump address 0 [CR]: b'0x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 1 [CR]: b'1x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 2 [CR]: b'2x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 3 [CR]: b'3x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 4 [CR]: b'4x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 5 [CR]: b'5x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 6 [CR]: b'6x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 7 [CR]: b'7x!\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 8 [CR]: b'8x!\r'
+RX: b''
+Result: no response
+TX current-driver short query at address 0 (bare ! is a flow query in v2) [CR]: b'0!\r'
+RX: b''
+Result: no response
+TX current-driver short query at address 1 (bare ! is a flow query in v2) [CR]: b'1!\r'
+RX: b''
+Result: no response
+TX protocol-version query without an address [CR]: b'x!\r'
+RX: b''
+Result: no response
+TX channel-addressing-mode query at address 0 [CR]: b'0~\r'
+RX: b''
+Result: no response
+TX channel-addressing-mode query at address 1 [CR]: b'1~\r'
+RX: b''
+Result: no response
+TX pump serial-number query at address 0 [CR]: b'0xS\r'
+RX: b''
+Result: no response
+TX documented protocol-version query at per-pump address 0 [CRLF]: b'0x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 1 [CRLF]: b'1x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 2 [CRLF]: b'2x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 3 [CRLF]: b'3x!\r\n'
+RX: b''
+Result: no response
+TX documented protocol-version query at legacy pump address 4 [CRLF]: b'4x!\r\n'
