@@ -3,3 +3,5 @@ __pycache__/
 .DS_Store
 deashing data/
 python classes/
+old versions/
+tmp/
