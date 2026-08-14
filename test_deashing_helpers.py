@@ -26,8 +26,14 @@ except ModuleNotFoundError:
     sys.modules["serial.tools"] = tools_module
     sys.modules["serial.tools.list_ports"] = list_ports_module
 
-from deashing_helpers import AccumetMeter, MasterflexPump, MasterflexRegloICCPump, find_devices
-from greg_program_v11 import prompt_yes_no_default_yes
+from deashing_helpers import (
+    AccumetMeter,
+    MasterflexPump,
+    MasterflexRegloICCPump,
+    find_devices,
+    is_ismatec_port,
+)
+from deashing import find_reglo_icc_pump, prompt_yes_no_default_yes
 
 
 class FakeSerialConnection:
@@ -147,6 +153,39 @@ class DeviceDiscoveryTests(unittest.TestCase):
             self.assertEqual(pump.port, "touchscreen")
 
 
+class RegloMetadataDiscoveryTests(unittest.TestCase):
+    def test_ismatec_port_metadata_is_recognized(self):
+        port_info = types.SimpleNamespace(
+            device="/dev/ttyACM0",
+            name="ttyACM0",
+            description="ISMATEC Reglo ICC",
+            manufacturer="",
+            product="",
+            hwid="USB VID:PID=265C:0001",
+        )
+
+        with patch("deashing_helpers.list_ports.comports", return_value=[port_info]):
+            self.assertTrue(is_ismatec_port("/dev/ttyACM0"))
+            self.assertFalse(is_ismatec_port("/dev/ttyUSB0"))
+
+    def test_reglo_discovery_skips_ports_without_ismatec_metadata(self):
+        reglo = types.SimpleNamespace(port="/dev/ttyACM0")
+
+        with patch(
+            "greg_program_v11.available_usb_ports",
+            return_value=["/dev/ttyUSB0", "/dev/ttyACM0"],
+        ), patch(
+            "greg_program_v11.is_ismatec_port",
+            side_effect=lambda port: port == "/dev/ttyACM0",
+        ), patch("greg_program_v11.port_is_open", return_value=False), patch.object(
+            MasterflexRegloICCPump, "probe", return_value=reglo
+        ) as probe:
+            result = find_reglo_icc_pump()
+
+        self.assertIs(result, reglo)
+        probe.assert_called_once_with("/dev/ttyACM0")
+
+
 class MasterflexRegloICCPumpTests(unittest.TestCase):
     def test_probe_initializes_independent_channel_control(self):
         connection = FakeSerialConnection([b"2\r\n", b"*\r\n", b"*\r\n"])
@@ -160,7 +199,7 @@ class MasterflexRegloICCPumpTests(unittest.TestCase):
 
         self.assertIsNotNone(pump)
         self.assertEqual(pump.address, 1)
-        self.assertEqual(connection.requests, [b"0!\r", b"@1\r", b"1~1\r"])
+        self.assertEqual(connection.requests, [b"0x!\r", b"@1\r", b"1~1\r"])
 
     def test_probe_rejects_nonempty_non_icc_protocol_response(self):
         connection = FakeSerialConnection([b"#\r\n"])
@@ -173,7 +212,7 @@ class MasterflexRegloICCPumpTests(unittest.TestCase):
             pump = MasterflexRegloICCPump.probe(connection.port)
 
         self.assertIsNone(pump)
-        self.assertEqual(connection.requests, [b"0!\r"])
+        self.assertEqual(connection.requests, [b"0x!\r"])
         self.assertTrue(connection.closed)
 
     def test_set_address_rejects_address_outside_manual_range(self):

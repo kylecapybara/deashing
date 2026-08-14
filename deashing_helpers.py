@@ -719,7 +719,7 @@ class MasterflexRegloICCPump:
         return self.require_ok(self.command("xE", int(bool(enabled))))
 
     def get_protocol_version(self):
-        return self.command("!")
+        return self.command("x!")
 
     def start(self, channel=None):
         return self.require_ok(self.command("H", address=self.address_for_channel(channel)))
@@ -1099,6 +1099,29 @@ def available_usb_ports():
         ports.update(glob.glob(pattern))
 
     return sorted(ports)
+
+
+def is_ismatec_port(port):
+    """Return whether OS serial-port metadata identifies an ISMATEC device."""
+    for port_info in list_ports.comports():
+        if port_info.device != port:
+            continue
+
+        searchable_text = " ".join(
+            str(value)
+            for value in (
+                port_info.device,
+                port_info.name,
+                port_info.description,
+                getattr(port_info, "manufacturer", None),
+                getattr(port_info, "product", None),
+                port_info.hwid,
+            )
+            if value
+        ).upper()
+        return "ISMATEC" in searchable_text
+
+    return False
 
 
 def find_devices():

@@ -1,6 +1,14 @@
 # Sugar deashing python script
 # written by Kyle Wodehouse & David Brown
 
+#  ██      ██    ██████████    ████████        ████████    ██████████      ██████      ██      ██                  ██          ██████
+#  ██╗     ██╗   ██════════╝   ██══════██    ██ ╚══════╝    ╚══██════╝   ██ ╚════██    ████    ██╗               ████╗       ██ ╚════██
+#  ██║     ██║   ████████      ████████ ╚╝    ╚██████          ██║       ██╗     ██╗   ██ ═██  ██║                ╚██║        ╚╝   ██ ╚╝
+#   ╚██  ██ ╚╝   ██ ═════╝     ██ ═══██╗        ╚════██        ██║       ██║     ██║   ██║  ╚████║                 ██║           ██ ╚╝
+#     ╚██ ╚╝     ██████████    ██║    ╚██    ████████ ╚╝   ██████████     ╚██████ ╚╝   ██║    ╚██║             ██████████    ██████████
+#       ╚╝        ╚════════╝    ╚╝      ╚╝    ╚══════╝      ╚════════╝      ╚════╝      ╚╝      ╚╝              ╚════════╝    ╚════════╝
+
+
 import datetime
 import os
 import time
@@ -13,6 +21,7 @@ from deashing_helpers import (
     available_usb_ports,
     create_run_paths,
     find_devices,
+    is_ismatec_port,
     log,
     port_is_open,
 )
@@ -104,6 +113,10 @@ def find_reglo_icc_pump(skip_ports=None):
 
     for port in available_usb_ports():
         if port in skip_ports:
+            continue
+
+        if not is_ismatec_port(port):
+            print(f"Skipping {port}: port metadata does not identify ISMATEC.")
             continue
 
         if port_is_open(port):
@@ -331,50 +344,92 @@ def run_post_run_reglo_flush(skip_ports=None, bath=None, bath_temperature_file=N
 def main():
     import cv2
 
-
-    resin_name = input("What resin is being used? ").strip()
-    run_paths = create_run_paths(resin_name)
-    output_file = run_paths["data_file"]
-    log_file = run_paths["log_file"]
-    video_file = run_paths["video_file"]
-    images_folder = run_paths["images_folder"]
-    bath_temperature_file = run_paths["bath_temperature_file"]
-    rinse_data_file = run_paths["rinse_data_file"]
-    rinse_bath_temperature_file = run_paths["rinse_bath_temperature_file"]
-    initialize_data_file(output_file)
-    initialize_bath_temperature_file(bath_temperature_file)
-    initialize_rinse_data_file(rinse_data_file)
-    initialize_rinse_bath_temperature_file(rinse_bath_temperature_file)
-
-    print(f"Saving run data in {run_paths['run_folder']}")
-    print(f"Saving run video to {video_file}")
-    print(f"Saving first-two-hour camera images to {images_folder}")
-    print(f"Saving bath temperature data to {bath_temperature_file}")
-    print(f"Saving rinse data to {rinse_data_file}")
-    print(f"Saving rinse bath temperature data to {rinse_bath_temperature_file}")
-
-    grace_period = MINIMUM_TIME_MINUTES
-    hard_stop = float(input("Maximum Time (min): "))
-    hard_stop_seconds = hard_stop * 60
-    MasterflexPump.format_time_seconds(hard_stop_seconds)
-
-    run_reglo_flush_after_run = prompt_yes_no_default_yes(
-        "Run the post-run flush after the run?"
-    )
-    turn_off_bath_after_run = prompt_yes_no_default_yes(
-        "Turn off the heating bath after the run?"
-    )
-
     accumet = None
     pump = None
-    cap = None
-    video = None
     bath = None
-    main_pump_started = False
+    preflight_reglo = None
 
+    # Discover every device before asking for interactive run settings. This
+    # makes missing ports and handshake failures visible immediately, even
+    # when the run is intended to be largely unattended.
     try:
         accumet, pump = find_devices()
         bath = find_isotemp_bath(skip_ports=(accumet.port, pump.port))
+        preflight_reglo = find_reglo_icc_pump(
+            skip_ports=(accumet.port, pump.port, bath.port)
+        )
+        print(f"Preflight found Reglo ICC pump on {preflight_reglo.port}.")
+    except BaseException:
+        for device in (preflight_reglo, bath, accumet, pump):
+            if device is not None:
+                try:
+                    device.close()
+                except (OSError, serial.SerialException):
+                    pass
+        raise
+
+    # The Reglo connection is only needed during the post-run flush; the
+    # successful preflight handshake is enough to validate it before prompts.
+    try:
+        preflight_reglo.close()
+    except (OSError, serial.SerialException):
+        for device in (bath, accumet, pump):
+            if device is not None:
+                try:
+                    device.close()
+                except (OSError, serial.SerialException):
+                    pass
+        raise
+    finally:
+        preflight_reglo = None
+
+    try:
+        resin_name = input("What resin is being used? ").strip()
+        run_paths = create_run_paths(resin_name)
+        output_file = run_paths["data_file"]
+        log_file = run_paths["log_file"]
+        video_file = run_paths["video_file"]
+        images_folder = run_paths["images_folder"]
+        bath_temperature_file = run_paths["bath_temperature_file"]
+        rinse_data_file = run_paths["rinse_data_file"]
+        rinse_bath_temperature_file = run_paths["rinse_bath_temperature_file"]
+        initialize_data_file(output_file)
+        initialize_bath_temperature_file(bath_temperature_file)
+        initialize_rinse_data_file(rinse_data_file)
+        initialize_rinse_bath_temperature_file(rinse_bath_temperature_file)
+
+        print(f"Saving run data in {run_paths['run_folder']}")
+        print(f"Saving run video to {video_file}")
+        print(f"Saving first-two-hour camera images to {images_folder}")
+        print(f"Saving bath temperature data to {bath_temperature_file}")
+        print(f"Saving rinse data to {rinse_data_file}")
+        print(f"Saving rinse bath temperature data to {rinse_bath_temperature_file}")
+
+        grace_period = MINIMUM_TIME_MINUTES
+        hard_stop = float(input("Maximum Time (min): "))
+        hard_stop_seconds = hard_stop * 60
+        MasterflexPump.format_time_seconds(hard_stop_seconds)
+
+        run_reglo_flush_after_run = prompt_yes_no_default_yes(
+            "Run the post-run flush after the run?"
+        )
+        turn_off_bath_after_run = prompt_yes_no_default_yes(
+            "Turn off the heating bath after the run?"
+        )
+    except BaseException:
+        for device in (bath, accumet, pump):
+            if device is not None:
+                try:
+                    device.close()
+                except (OSError, serial.SerialException):
+                    pass
+        raise
+
+    cap = None
+    video = None
+    main_pump_started = False
+
+    try:
         print(bath.set_unit_on(True))
         print("Fisher Isotemp bath turned on.")
         log(log_file, f"{datetime.datetime.now()}, Fisher Isotemp bath turned on.")
